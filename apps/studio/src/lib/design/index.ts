@@ -6,3 +6,8 @@ export { default as Enum } from './Enum.svelte';
 export { default as Text } from './Text.svelte';
 export { default as Seed } from './Seed.svelte';
 export { default as MultiMarkerSlider } from './MultiMarkerSlider.svelte';
+
+// NodeCard — 고정 해부 구조 (§5.3). 파라미터는 위 6종 위젯으로만 채운다.
+export { default as NodeCard } from './NodeCard.svelte';
+export type { Category } from './NodeCard.svelte';
+

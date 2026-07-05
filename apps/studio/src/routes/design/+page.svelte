@@ -47,6 +47,10 @@
 	<header>
 		<h1 class="dg-h1">conode · design system</h1>
 		<p class="dg-sub mono">M0 · T2 — tokens + 6 primitive widgets (PLAN §5.1–5.2)</p>
+		<nav class="dg-nav mono">
+			<a href="/design">design system</a>
+			<a href="/nodes">nodes →</a>
+		</nav>
 	</header>
 
 	<section class="dg-section">
