@@ -166,6 +166,49 @@
         "port": { "type": "string" }
       }
     },
+    "SceneSave": {
+      "type": "object",
+      "description": "현재 파라미터 상태를 씬으로 저장 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v", "name"],
+      "properties": {
+        "type": { "const": "scene.save" },
+        "v": { "const": 0 },
+        "name": { "type": "string" }
+      }
+    },
+    "SceneRecall": {
+      "type": "object",
+      "description": "씬 recall — fade 초 동안 크로스페이드 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v", "name"],
+      "properties": {
+        "type": { "const": "scene.recall" },
+        "v": { "const": 0 },
+        "name": { "type": "string" },
+        "fade": { "type": "number" }
+      }
+    },
+    "SceneGet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "v"],
+      "properties": {
+        "type": { "const": "scene.get" },
+        "v": { "const": 0 }
+      }
+    },
+    "SceneList": {
+      "type": "object",
+      "description": "씬 목록 (engine→UI).",
+      "additionalProperties": false,
+      "required": ["type", "v", "names"],
+      "properties": {
+        "type": { "const": "scene.list" },
+        "v": { "const": 0 },
+        "names": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "Message": {
       "description": "모든 프로토콜 메시지의 판별 유니온 (discriminator: type).",
       "oneOf": [
@@ -178,7 +221,11 @@
         { "$ref": "#/$defs/NodeAdd" },
         { "$ref": "#/$defs/NodeRemove" },
         { "$ref": "#/$defs/NodeConnect" },
-        { "$ref": "#/$defs/NodeDisconnect" }
+        { "$ref": "#/$defs/NodeDisconnect" },
+        { "$ref": "#/$defs/SceneSave" },
+        { "$ref": "#/$defs/SceneRecall" },
+        { "$ref": "#/$defs/SceneGet" },
+        { "$ref": "#/$defs/SceneList" }
       ]
     }
   },

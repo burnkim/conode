@@ -17,6 +17,7 @@ export class ConodeClient {
 	status = $state<ConnStatus>('idle');
 	nodes = $state<NodeInfo[]>([]);
 	edges = $state<Edge[]>([]);
+	scenes = $state<string[]>([]);
 	frames = $state<Record<string, FrameState>>({});
 	rejected = $state(0); // 스키마 위반으로 버린 메시지 수
 
@@ -57,6 +58,8 @@ export class ConodeClient {
 		} else if (msg.type === 'graph.state') {
 			this.nodes = msg.nodes;
 			this.edges = msg.edges;
+		} else if (msg.type === 'scene.list') {
+			this.scenes = msg.names;
 		} else if (msg.type === 'frame.preview') {
 			this.frames = {
 				...this.frames,
@@ -91,6 +94,14 @@ export class ConodeClient {
 	}
 	disconnectNode(dst: string, port = 'in'): void {
 		this.#send({ type: 'node.disconnect', v: 0, dst, port });
+	}
+
+	// --- 씬/큐 (D) ---
+	saveScene(name: string): void {
+		this.#send({ type: 'scene.save', v: 0, name });
+	}
+	recallScene(name: string, fade = 0): void {
+		this.#send({ type: 'scene.recall', v: 0, name, fade });
 	}
 
 	#send(obj: unknown): void {

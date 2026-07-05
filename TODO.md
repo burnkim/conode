@@ -110,7 +110,8 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
       ↳ 2026-07-05: pytest+12(노드 B). 팔레트로 StylePreset 추가→/live 자동 파라미터(enum+slider) 실측. (Video File/EnvelopeFollower/standalone LFO 는 후속.)
 - [x] C 제스처 JSON 규칙 배선 + ModMatrix 제스처 소스. (이벤트 버스/씬 트리거→D, 매트릭스 에디터 UI→후속)
       ↳ 2026-07-05: GestureRecognizer custom_rules(JSON)→eval_json_rules 적용. ModMatrix gesture 입력 + gesture.frame/value/point 소스(§3.3), 그래프 gesture→mod, 프레임 제스처가 prompt_strength 밀어올림. pytest+3.
-- [ ] D 큐/씬 시스템 + crossfade + MIDI/OSC In.
+- [x] D 큐/씬 시스템 + crossfade. (MIDI/OSC In 은 후속: 디바이스/deps 의존)
+      ↳ 2026-07-05: core/scenes.SceneStore(capture/save/recall+fade 크로스페이드/update). 프로토콜 scene.save/recall/get/list, 서버+브로드캐스터 update, 클라이언트, /scenes UI. Crossfade 노드(B). pytest+8. /scenes E2E: intro/drop 저장→recall 크로스페이드 실측.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.

@@ -29,7 +29,11 @@ const ORDER = [
 	'NodeAdd',
 	'NodeRemove',
 	'NodeConnect',
-	'NodeDisconnect'
+	'NodeDisconnect',
+	'SceneSave',
+	'SceneRecall',
+	'SceneGet',
+	'SceneList'
 ];
 const MESSAGES = ORDER.filter((n) => isMessage(defs[n]));
 

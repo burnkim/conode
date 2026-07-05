@@ -102,7 +102,31 @@ class NodeDisconnect(BaseModel):
     dst: str
     port: str
 
-Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect], Field(discriminator="type")]
+class SceneSave(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["scene.save"] = "scene.save"
+    v: Literal[0] = 0
+    name: str
+
+class SceneRecall(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["scene.recall"] = "scene.recall"
+    v: Literal[0] = 0
+    name: str
+    fade: Optional[float] = None
+
+class SceneGet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["scene.get"] = "scene.get"
+    v: Literal[0] = 0
+
+class SceneList(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["scene.list"] = "scene.list"
+    v: Literal[0] = 0
+    names: list[str]
+
+Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList], Field(discriminator="type")]
 _ADAPTER: TypeAdapter[Message] = TypeAdapter(Message)
 
 

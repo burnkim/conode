@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
 from typing import Iterable, Optional
 
 import websockets
 
 from ..core.graph import Graph
 from ..core.processor import Processor
+from ..core.scenes import SceneStore
 from .messages import (
     Edge,
     FramePreview,
@@ -27,6 +29,10 @@ from .messages import (
     NodeList,
     NodeRemove,
     ParamSet,
+    SceneGet,
+    SceneList,
+    SceneRecall,
+    SceneSave,
     dump_message,
     parse_message,
 )
@@ -67,6 +73,7 @@ class EngineServer:
                 graph.add(n)
         self.graph = graph
         self.clients: set = set()
+        self.scenes = SceneStore()  # D: 씬/큐
 
     @property
     def nodes(self) -> dict[str, Processor]:
@@ -100,6 +107,7 @@ class EngineServer:
             await self._send(ws, Hello(role="engine", app="conode-engine/0.0.0"))
             await self._send(ws, NodeList(nodes=self.node_infos()))
             await self._send(ws, self.graph_state())
+            await self._send(ws, SceneList(names=self.scenes.names()))
             async for raw in ws:
                 await self._on_message(ws, raw)
         except websockets.ConnectionClosed:
@@ -138,6 +146,13 @@ class EngineServer:
         elif isinstance(msg, NodeDisconnect):
             self.graph.disconnect(msg.dst, msg.port)
             await self.broadcast(self.graph_state())
+        elif isinstance(msg, SceneSave):
+            self.scenes.save(msg.name, self.graph)
+            await self.broadcast(SceneList(names=self.scenes.names()))
+        elif isinstance(msg, SceneRecall):
+            self.scenes.recall(msg.name, self.graph, fade=float(msg.fade or 0.0), now=time.monotonic())
+        elif isinstance(msg, SceneGet):
+            await self._send(ws, SceneList(names=self.scenes.names()))
 
     async def _add_node(self, msg: NodeAdd) -> None:
         cls = node_registry().get(msg.node_type)

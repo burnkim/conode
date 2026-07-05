@@ -136,7 +136,43 @@ export const NodeDisconnect = z
 	.strict();
 export type NodeDisconnect = z.infer<typeof NodeDisconnect>;
 
-export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect]);
+export const SceneSave = z
+	.object({
+	"type": z.literal("scene.save"),
+	"v": z.literal(0),
+	"name": z.string()
+	})
+	.strict();
+export type SceneSave = z.infer<typeof SceneSave>;
+
+export const SceneRecall = z
+	.object({
+	"type": z.literal("scene.recall"),
+	"v": z.literal(0),
+	"name": z.string(),
+	"fade": z.number().optional()
+	})
+	.strict();
+export type SceneRecall = z.infer<typeof SceneRecall>;
+
+export const SceneGet = z
+	.object({
+	"type": z.literal("scene.get"),
+	"v": z.literal(0)
+	})
+	.strict();
+export type SceneGet = z.infer<typeof SceneGet>;
+
+export const SceneList = z
+	.object({
+	"type": z.literal("scene.list"),
+	"v": z.literal(0),
+	"names": z.array(z.string())
+	})
+	.strict();
+export type SceneList = z.infer<typeof SceneList>;
+
+export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList]);
 export type Message = z.infer<typeof Message>;
 
 export function parseMessage(u: unknown): Message {

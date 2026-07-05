@@ -74,6 +74,7 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
         while True:
             t0 = time.monotonic()
             if server.clients:
+                server.scenes.update(graph, t0)  # D: 씬 크로스페이드 진행
                 graph.evaluate(FrameCtx(seq=seq, t=t0))
                 now = time.monotonic()
                 dt = now - last

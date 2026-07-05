@@ -125,10 +125,12 @@ def test_ws_handshake_paramset_and_broadcast():
                 hello = json.loads(await ws.recv())
                 nodelist = json.loads(await ws.recv())
                 graphstate = json.loads(await ws.recv())
+                scenelist = json.loads(await ws.recv())
                 assert hello["type"] == "hello" and hello["role"] == "engine"
                 assert nodelist["type"] == "node.list"
                 assert nodelist["nodes"][0]["id"] == "cam1"
                 assert graphstate["type"] == "graph.state"
+                assert scenelist["type"] == "scene.list"
 
                 # UI→engine: param.set
                 await ws.send(
@@ -170,7 +172,7 @@ def test_graph_edit_over_ws():
         async with websockets.serve(srv.handler, "127.0.0.1", 0) as server:
             port = server.sockets[0].getsockname()[1]
             async with websockets.connect(f"ws://127.0.0.1:{port}") as ws:
-                for _ in range(3):  # hello, node.list, graph.state
+                for _ in range(4):  # hello, node.list, graph.state, scene.list
                     await ws.recv()
 
                 await ws.send(
@@ -201,7 +203,7 @@ def test_node_add_remove_over_ws():
         async with websockets.serve(srv.handler, "127.0.0.1", 0) as server:
             port = server.sockets[0].getsockname()[1]
             async with websockets.connect(f"ws://127.0.0.1:{port}") as ws:
-                for _ in range(3):
+                for _ in range(4):  # hello, node.list, graph.state, scene.list
                     await ws.recv()
 
                 await ws.send(
