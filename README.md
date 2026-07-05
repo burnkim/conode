@@ -23,7 +23,7 @@ cd .. && engine/.venv/bin/python -m conode_engine   # ws://127.0.0.1:8787
 #   /design  디자인 시스템      /nodes  NodeCard 갤러리
 #   /live    라이브 그래프       /quad   비전 쿼드뷰
 #   /graph   노드 그래프 편집    /audio  오디오 ModMatrix
-#   /output  코너핀 매핑 출력
+#   /output  코너핀 매핑 출력    /scenes 씬/큐
 ```
 > `/live`·`/quad`·`/graph`·`/audio`·`/output`은 엔진 연결 필요. 첫 실행 시 MediaPipe 모델은
 > `engine/models/`로 자동 다운로드(캐시).
@@ -34,15 +34,25 @@ cd .. && engine/.venv/bin/python -m conode_engine   # ws://127.0.0.1:8787
 - **오디오 12스템 ModMatrix (§3)**: 스템×특성 → modulatable 파라미터 모듈레이션 + 프롬프트
   바인딩 `(star:{kick.rms})`. "제품의 심장".
 
-## 노드 (13종)
+## 노드 (21종)
 | 카테고리 | 노드 |
 |---|---|
-| Input | Camera · AudioIn |
+| Input | Camera · Image · AudioIn |
 | Vision | Canny · Pose · Segmentation · HandTracker |
-| Analysis(Depth) | DepthMap · GestureRecognizer · RegionMask |
-| Generate | LiveDiffusion |
+| Analysis(Depth) | DepthMap · GestureRecognizer · RegionMask · MaskCompose |
+| Generate | LiveDiffusion · Blend · Crossfade · ColorGrade · Switch · FeedbackLoop · StylePreset |
 | Audio | ModMatrix |
 | Output | MappedOutput · Recorder |
+
+> 노드는 엔진 `Processor` 클래스만 추가하면 UI(파라미터 패널·프리뷰)가 **ParamSpec 에서
+> 자동 생성**된다(R2) — 손으로 만들지 않는다. `/graph` 팔레트에 전 노드 노출.
+
+## 라이브 악기 기능
+- **파라미터 자동 UI (R2)**: 노드 ParamSpec → 6종 위젯 자동 렌더 + 모듈레이션 링.
+- **노드별 fps + latest-wins (§1.2)**: 무거운 노드는 낮은 fps, 다운스트림은 최신 출력 소비.
+- **씬/큐 (§0.2)**: 파라미터 스냅샷 저장 → 크로스페이드 recall. 제스처 이벤트(palm_push/
+  point_hold)를 씬에 바인딩해 트리거(§2).
+- **커스텀 제스처**: JSON 규칙(dist/angle/finger)으로 사용자 제스처 추가(ComfyUI 대비 차별점).
 
 ## 아키텍처
 2-프로세스: **UI**(`apps/studio`, Tauri 2 + Svelte 5) ↔ **엔진**(`engine/`, Python).
@@ -70,6 +80,11 @@ presets/      예제 그래프 프리셋
 | M6 | 제품화 (라이선스·프리셋·문서) | ✅ |
 
 > 🔶 = Mac 개발기에서 실행 불가(CUDA/TRT, 네이티브 브리지) → 코드+문서, 타깃 배포 시 검증.
+
+리뷰 후속 완료: ParamSpec→UI 자동생성(R2 척추), 노드별 fps+latest-wins, v1 노드 8종
+추가(총 21종), 제스처 JSON 규칙·ModMatrix 제스처 소스, 씬/큐 + 제스처 이벤트 바인딩.
+남은 로드맵: FaceMesh(v1.5), 메쉬 워프(v1.5), 준실시간 스템 분리(v2), MIDI/OSC In,
+플러그인 SDK.
 
 ## 개발
 ```bash
