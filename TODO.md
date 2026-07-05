@@ -7,7 +7,8 @@
       ↳ 2026-07-05 완료: NodeCard.svelte(§5.3 고정 해부: 헤더 h56 카테고리색→다크 그라디언트, 핀/재생/이름/perf배지/⚡/경로/fps, PARAMETERS(T2 위젯), 16:9 인라인 프리뷰). /nodes 데모 6 카테고리 + 성능배지 ok4/warn1/error1(fps 기준). svelte-check 0/0, 스크린샷 docs/verify/T3-nodecard.png.
 - [x] T4 packages/schema v0 (hello, node.list, param.set, frame.preview) + zod/pydantic 생성
       ↳ 2026-07-05 완료: protocol.schema.json(원천, 판별유니온) + generate.mjs로 zod(apps/studio/src/lib/protocol/messages.ts)·pydantic(engine/conode_engine/protocol/messages.py) 생성(R3). 공유 픽스처 examples.json으로 계약 테스트 양쪽 통과(pytest 17, vitest 16). R7 추가 의존성: zod(UI 런타임), vitest(UI dev), pydantic·pytest(engine, py3.12 venv=engine/.venv).
-- [ ] T5 engine 스켈레톤: WS 서버 + scheduler + ParamSpec — 완료조건: pytest 통과
+- [x] T5 engine 스켈레톤: WS 서버 + scheduler + ParamSpec — 완료조건: pytest 통과
+      ↳ 2026-07-05 완료: core/param_spec(6위젯+Group+ParamStore, R2/R6/R8), processor(tick/process, R4), latest_wins(드랍), scheduler(노드별 fps·지연누적금지), protocol/server(hello→node.list, param.set 적용, frame.preview broadcast, R3/R5). pytest 26 passed(프로토콜17+엔진9, WS 핸드셰이크·param.set·broadcast 왕복 포함). 런타임 의존성 설치(websockets/numpy/opencv/pillow).
 - [ ] T6 Camera 노드 E2E — 완료조건: 카메라 프리뷰가 NodeCard 안에 15fps+로 표시, 실측 fps 배지 동작
 ## Questions
 (비어 있음)
