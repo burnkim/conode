@@ -17,6 +17,7 @@ from .core.processor import FrameCtx
 from .nodes.camera import Camera
 from .nodes.canny import Canny
 from .nodes.depth import Depth
+from .nodes.live_diffusion import LiveDiffusion
 from .nodes.pose import Pose
 from .nodes.segmentation import Segmentation
 from .protocol.messages import FramePreview
@@ -33,6 +34,10 @@ def build_graph() -> tuple[Graph, Camera]:
         node.index = i
         graph.add(node)
         graph.connect("cam1", node.id, "in")
+    live = LiveDiffusion("live1", index=6)
+    graph.add(live)
+    graph.connect("cam1", "live1", "in")
+    graph.connect("canny1", "live1", "control")  # ControlNet 컨디셔닝
     return graph, cam
 
 

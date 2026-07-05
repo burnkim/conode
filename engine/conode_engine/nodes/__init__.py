@@ -2,7 +2,8 @@
 from .camera import Camera
 from .canny import Canny
 from .depth import Depth
+from .live_diffusion import LiveDiffusion
 from .pose import Pose
 from .segmentation import Segmentation
 
-__all__ = ["Camera", "Canny", "Depth", "Pose", "Segmentation"]
+__all__ = ["Camera", "Canny", "Depth", "LiveDiffusion", "Pose", "Segmentation"]

@@ -37,6 +37,7 @@ def node_registry() -> dict:
     from ..nodes.camera import Camera
     from ..nodes.canny import Canny
     from ..nodes.depth import Depth
+    from ..nodes.live_diffusion import LiveDiffusion
     from ..nodes.pose import Pose
     from ..nodes.segmentation import Segmentation
 
@@ -46,6 +47,7 @@ def node_registry() -> dict:
         "depth": Depth,
         "pose": Pose,
         "segmentation": Segmentation,
+        "live_diffusion": LiveDiffusion,
     }
 
 

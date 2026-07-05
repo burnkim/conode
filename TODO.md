@@ -38,6 +38,16 @@ T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pyte
 T7~T14 전부 완료·검증·커밋·push. 비전 파이프라인(Canny/Pose/Depth/Seg) + 쿼드뷰 + 그래프 편집기.
 pytest 56 · vitest 26 · svelte-check 0/0.
 
+# TODO — M2 LiveDiffusion (타깃: RTX 4090 / TRT · Mac 개발기는 폴백으로 검증)
+- [x] T15 LiveDiffusion 노드 스캐폴드 — §1.2 ParamSpec 전체 + 포트(in/control/mask) + 백엔드 추상화 + FallbackBackend(스타일라이즈). 그래프 통합. [Mac 검증]
+      ↳ 2026-07-05 완료: nodes/live_diffusion.py(§1.2 전체 ParamSpec+Group, 포트 in/control/mask), diffusion/backend.py(DiffusionBackend 추상화 + FallbackBackend cv2.stylization+프롬프트 색조+control 오버레이, select_backend). 그래프 cam1→live1.in, canny1→live1.control. registry+app 통합. E2E /live 6노드 24fps, LiveDiffusion 스타일라이즈 프리뷰. pytest 64.
+- [x] T16 Similar Image Filter — 프레임 유사도 스킵(sif_threshold/sif_max_skip). [Mac 검증]
+      ↳ 2026-07-05 완료: diffusion/sif.py(연속 프레임 유사도, max_skip 캡). LiveDiffusion advanced에 연결. 결정적 테스트 3.
+- [~] T17 RegionApply/Composite — 마스크 영역만 디퓨전 결과로 치환(§2). [부분: LiveDiffusion.process 안에 mask 영역 치환 구현·테스트. 독립 Composite 노드는 추후]
+- [ ] T18 StreamDiffusion 백엔드 — SD-Turbo/LCM + Multi-ControlNet (CUDA). [4090, 코드+문서, 배포 검증]
+- [ ] T19 TensorRT 빌드 캐시 + CUDA 스트림 (realtime-perf 스킬). [4090]
+- [ ] T20 25fps 달성 벤치 (§6 예산) — DoD. [4090 only]
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).
