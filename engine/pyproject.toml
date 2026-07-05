@@ -9,6 +9,7 @@ description = "conode 실시간 그래프 엔진 (PyTorch/TensorRT 타깃). PLAN
 requires-python = ">=3.10,<3.13"
 dependencies = [
   "pydantic>=2.6",
+  "cryptography>=42",  # M6 라이선스 (Ed25519)
 ]
 
 [project.optional-dependencies]

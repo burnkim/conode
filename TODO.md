@@ -88,6 +88,20 @@ T25~T29 전부 완료·검증(Mac). 12스템 ModMatrix 라이브 모듈레이션
 ## M5 상태 (2026-07-05)
 포터블 코어(MappedOutput 코너핀·Recorder·에디터 UI) Mac 검증 완료. 네이티브 출력(NDI/Spout/Syphon·멀티디스플레이)은 문서화, 배포 검증 대기. pytest 90.
 
+# TODO — M6 제품화 (PLAN §7)
+- [x] T34 라이선스 — Ed25519 서명 라이선스(오프라인), 티어 Personal/Pro/Edu, gen/verify + CLI(python -m conode_engine.licensing). [Mac 검증]
+- [x] T35 프리셋 팩 — presets/gesture-diffusion·audio-reactive(SavedGraph 포맷), 검증 테스트. [Mac 검증]
+- [x] T36 README + 문서 — README.md(소개/실행/구조/노드/마일스톤/라이선스). [문서]
+- [x] T37 인스톨러 — tauri.conf bundle 메타(category/copyright/macOS) + docs/installer.md(dmg/msi·사이닝·사이드카·체크리스트). [설정+문서]
+      ↳ 2026-07-05 M6 완료: conode_engine/licensing.py(Ed25519, cryptography 의존), presets/, README.md, docs/installer.md. pytest 96 · vitest 26 · svelte-check 0/0.
+
+## M6 완료 (2026-07-05)
+T34~T37 전부 완료·검증(Mac). 라이선스·프리셋·README·인스톨러 문서. pytest 96.
+
+## PLAN §8 마일스톤 종합 (2026-07-05)
+M0✅ M1✅ M2🔶(4090 배포검증) M3✅ M4✅ M5✅(코어)/🔶(네이티브 출력) M6✅.
+Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25fps), 네이티브 출력(NDI/Spout/Syphon·멀티디스플레이).
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

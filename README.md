@@ -1,0 +1,87 @@
+# conode
+
+**실시간 AI 비주얼 퍼포먼스 엔진** — 라이브 영상·오디오·제스처를 실시간 디퓨전과
+프로젝션 매핑까지 하나의 노드 그래프로 잇는 퍼포먼스 악기(instrument).
+
+> ComfyUI가 이미지를 "만든다"면, conode는 이미지를 "연주한다". 모든 노드가 지정 fps로
+> 상시 스트리밍되고, 오디오·제스처·MIDI·LFO가 모든 파라미터를 모듈레이션한다.
+> 설계 원천: [`docs/PLAN.md`](docs/PLAN.md).
+
+## 빠른 시작
+
+```bash
+# 1) 프론트엔드 (Tauri 2 + SvelteKit)
+pnpm install
+pnpm dev                      # 빈 Tauri 창 / http://localhost:1420
+
+# 2) 엔진 (Python 3.12)
+cd engine && uv venv --python 3.12 .venv
+uv pip install --python .venv -e ".[dev,runtime]"
+cd .. && engine/.venv/bin/python -m conode_engine   # ws://127.0.0.1:8787
+
+# 3) 브라우저에서 화면 열기 (엔진 실행 중이어야 함)
+#   /design  디자인 시스템      /nodes  NodeCard 갤러리
+#   /live    라이브 그래프       /quad   비전 쿼드뷰
+#   /graph   노드 그래프 편집    /audio  오디오 ModMatrix
+#   /output  코너핀 매핑 출력
+```
+> `/live`·`/quad`·`/graph`·`/audio`·`/output`은 엔진 연결 필요. 첫 실행 시 MediaPipe 모델은
+> `engine/models/`로 자동 다운로드(캐시).
+
+## 시그니처 기능
+- **제스처 = 영역 디퓨전 (§2)**: 양손으로 프레임을 만들면 그 사각형 내부만 디퓨전.
+  `Camera → HandTracker → GestureRecognizer → RegionMask → LiveDiffusion.mask`.
+- **오디오 12스템 ModMatrix (§3)**: 스템×특성 → modulatable 파라미터 모듈레이션 + 프롬프트
+  바인딩 `(star:{kick.rms})`. "제품의 심장".
+
+## 노드 (13종)
+| 카테고리 | 노드 |
+|---|---|
+| Input | Camera · AudioIn |
+| Vision | Canny · Pose · Segmentation · HandTracker |
+| Analysis(Depth) | DepthMap · GestureRecognizer · RegionMask |
+| Generate | LiveDiffusion |
+| Audio | ModMatrix |
+| Output | MappedOutput · Recorder |
+
+## 아키텍처
+2-프로세스: **UI**(`apps/studio`, Tauri 2 + Svelte 5) ↔ **엔진**(`engine/`, Python).
+계약은 `packages/schema`(JSON Schema → zod/pydantic 생성)로만(R3). 프레임은 프리뷰
+JPEG over WS, 최종 출력은 엔진이 직접(R5).
+
+```
+apps/studio/  Tauri+Svelte (src/lib/design 토큰·위젯·NodeCard, graph 편집, protocol)
+engine/       Python (core 그래프/스케줄러, nodes, diffusion, audio, gesture, protocol)
+packages/schema/  프로토콜 원천(zod/pydantic 생성)
+skills/       realtime-perf · gesture-rules
+docs/         PLAN.md · output-bridges.md · verify/(스크린샷)
+presets/      예제 그래프 프리셋
+```
+
+## 마일스톤 상태
+| | | 상태 |
+|---|---|---|
+| M0 | 스켈레톤 (모노레포·디자인시스템·프로토콜·엔진·Camera E2E) | ✅ |
+| M1 | 비전 파이프라인 (Canny/Pose/Depth/Seg·쿼드뷰·그래프 편집기) | ✅ |
+| M2 | LiveDiffusion (StreamDiffusion+TRT, LCM) | 🔶 코드+문서 · **4090 배포 검증** |
+| M3 | 제스처 = 영역 디퓨전 | ✅ |
+| M4 | 오디오 12스템 ModMatrix | ✅ |
+| M5 | 출력 (코너핀·Recorder / NDI·Spout·Syphon) | ✅ 코어 · 🔶 네이티브 문서 |
+| M6 | 제품화 (라이선스·프리셋·문서) | ✅ |
+
+> 🔶 = Mac 개발기에서 실행 불가(CUDA/TRT, 네이티브 브리지) → 코드+문서, 타깃 배포 시 검증.
+
+## 개발
+```bash
+pnpm --filter @conode/studio check        # svelte-check
+pnpm --filter @conode/studio test         # vitest (프로토콜 계약)
+engine/.venv/bin/python -m pytest engine/tests/   # 엔진
+engine/.venv/bin/python -m conode_engine.bench all --enforce   # §6 성능 예산
+pnpm --filter @conode/schema generate     # 프로토콜 재생성(스키마 수정 후)
+```
+운용 규칙: [`CLAUDE.md`](CLAUDE.md) (작업 루프 · 불변 규칙 R1~R8). 작업 큐: [`TODO.md`](TODO.md).
+
+## 라이선스 (제품)
+유료 영구 + 업데이트권. 티어 Personal/Pro/Edu. Ed25519 서명 라이선스 파일 · **오프라인
+활성화**(공연장 인터넷 없음 전제). `python -m conode_engine.licensing`. 모델 가중치는 앱
+미포함(다운로더). SD-Turbo 등 상업 라이선스는 LCM 채택으로 해소(§11).

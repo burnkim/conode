@@ -29,12 +29,19 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "category": "GraphicsAndDesign",
+    "copyright": "© 2026 conode",
+    "shortDescription": "실시간 AI 비주얼 퍼포먼스 엔진",
+    "longDescription": "라이브 영상·오디오·제스처를 실시간 디퓨전과 프로젝션 매핑까지 하나의 노드 그래프로 잇는 퍼포먼스 악기.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "version": 0,
+  "name": "Gesture → Region Diffusion",
+  "description": "양손 프레임 제스처로 영역을 지정해 그 안만 디퓨전 (시그니처 A, §2).",
+  "nodes": [
+    { "id": "cam1", "node_type": "camera", "x": 40, "y": 80 },
+    { "id": "canny1", "node_type": "canny", "x": 320, "y": 30 },
+    { "id": "hands1", "node_type": "hand_tracker", "x": 320, "y": 150 },
+    { "id": "gesture1", "node_type": "gesture_recognizer", "x": 560, "y": 150 },
+    { "id": "region1", "node_type": "region_mask", "x": 800, "y": 150 },
+    { "id": "live1", "node_type": "live_diffusion", "x": 800, "y": 30 }
+  ],
+  "edges": [
+    { "src": "cam1", "dst": "canny1", "port": "in" },
+    { "src": "cam1", "dst": "hands1", "port": "in" },
+    { "src": "hands1", "dst": "gesture1", "port": "hands" },
+    { "src": "gesture1", "dst": "region1", "port": "gesture" },
+    { "src": "cam1", "dst": "live1", "port": "in" },
+    { "src": "canny1", "dst": "live1", "port": "control" },
+    { "src": "region1", "dst": "live1", "port": "mask" }
+  ]
+}

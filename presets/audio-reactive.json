@@ -1,0 +1,20 @@
+{
+  "version": 0,
+  "name": "Audio-reactive Diffusion → Mapped",
+  "description": "12스템 오디오가 디퓨전 파라미터를 모듈레이션, 코너핀 매핑 출력 (시그니처 B, §3/§4).",
+  "nodes": [
+    { "id": "cam1", "node_type": "camera", "x": 40, "y": 90 },
+    { "id": "canny1", "node_type": "canny", "x": 300, "y": 40 },
+    { "id": "live1", "node_type": "live_diffusion", "x": 540, "y": 40 },
+    { "id": "audio1", "node_type": "audio_in", "x": 300, "y": 200 },
+    { "id": "mod1", "node_type": "mod_matrix", "x": 540, "y": 200 },
+    { "id": "mapped1", "node_type": "mapped_output", "x": 800, "y": 40 }
+  ],
+  "edges": [
+    { "src": "cam1", "dst": "canny1", "port": "in" },
+    { "src": "cam1", "dst": "live1", "port": "in" },
+    { "src": "canny1", "dst": "live1", "port": "control" },
+    { "src": "audio1", "dst": "mod1", "port": "audio" },
+    { "src": "live1", "dst": "mapped1", "port": "in" }
+  ]
+}
