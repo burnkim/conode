@@ -11,3 +11,6 @@ export { default as MultiMarkerSlider } from './MultiMarkerSlider.svelte';
 export { default as NodeCard } from './NodeCard.svelte';
 export type { Category } from './NodeCard.svelte';
 
+// ParamPanel — ParamSpec(와이어) → 6종 위젯 자동 생성 (R2). 손으로 파라미터 UI 금지.
+export { default as ParamPanel } from './ParamPanel.svelte';
+

@@ -44,6 +44,8 @@ function zodField(s) {
 	switch (s.type) {
 		case 'array':
 			return `z.array(${zodField(s.items)})`;
+		case 'object':
+			return `z.record(z.unknown())`; // 자유형 오브젝트 (ParamSpec 등)
 		case 'integer':
 			return `z.number().int()`;
 		case 'number':
@@ -105,14 +107,18 @@ function pyField(s) {
 	if (s.enum) return `Literal[${s.enum.map(jsonLit).join(', ')}]`;
 	if (s.oneOf) {
 		const parts = s.oneOf.map(pyField);
-		// number|string|boolean → bool 우선(true/false 보존), int 포함
-		if (parts.includes('float') && parts.includes('str'))
-			return `Union[bool, int, float, str]`;
+		// number|string|boolean → bool 우선(true/false 보존), int 포함, 배열 지원
+		if (parts.includes('float') && parts.includes('str')) {
+			const extra = parts.filter((p) => p.startsWith('list'));
+			return `Union[bool, int, float, str${extra.length ? ', ' + extra.join(', ') : ''}]`;
+		}
 		return `Union[${parts.join(', ')}]`;
 	}
 	switch (s.type) {
 		case 'array':
 			return `list[${pyField(s.items)}]`;
+		case 'object':
+			return 'dict';
 		case 'integer':
 			return 'int';
 		case 'number':

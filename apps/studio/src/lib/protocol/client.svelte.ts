@@ -72,7 +72,7 @@ export class ConodeClient {
 		}
 	}
 
-	setParam(node: string, path: string, value: number | string | boolean): void {
+	setParam(node: string, path: string, value: number | string | boolean | number[]): void {
 		this.#send({ type: 'param.set', v: 0, node, path, value });
 	}
 

@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
 PROTOCOL_VERSION = 0
 
-ParamValue = Union[bool, int, float, str]
+ParamValue = Union[bool, int, float, str, list[float]]
 
 Category = Literal["input", "vision", "depth", "generate", "audio", "output"]
 
@@ -20,6 +20,7 @@ class NodeInfo(BaseModel):
     index: int
     node_type: Optional[str] = None
     inputs: Optional[list[str]] = None
+    params: Optional[dict] = None
 
 class Edge(BaseModel):
     model_config = ConfigDict(extra="forbid")

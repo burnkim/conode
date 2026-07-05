@@ -177,7 +177,8 @@ class ParamStore:
         return [p for p, s in self._specs.items() if s.modulatable]
 
     def describe(self) -> dict:
-        return {p: s.to_dict() for p, s in self._specs.items()}
+        # UI 자동생성(R2)용 — 스펙 + 현재 값. path 는 Group 평탄화된 dotted.
+        return {p: {**s.to_dict(), "value": self._values[p]} for p, s in self._specs.items()}
 
     def values(self) -> dict:
         return dict(self._values)

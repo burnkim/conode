@@ -95,6 +95,7 @@ class EngineServer:
                 index=n.index,
                 node_type=n.kind,
                 inputs=list(n.inputs),
+                params=n.store.describe(),  # R2: UI 자동생성용 ParamSpec + 현재값
             )
             for n in self.graph.nodes.values()
         ]

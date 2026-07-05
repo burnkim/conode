@@ -1,52 +1,31 @@
 <script lang="ts">
-	// /live (T6/T8) — 그래프 라이브. engine(ws://127.0.0.1:8787) 의 모든 노드를
-	// NodeCard 로 렌더(Camera→Canny). 각 노드 frame.preview → 인라인 프리뷰 + 실측 fps.
-	// R1: 스타일 미선언 → design/ 클래스만. R5: 프리뷰 전용(최종 출력 아님).
+	// /live — 라이브 그래프. 엔진의 모든 노드를 NodeCard 로 렌더하고, 파라미터는
+	// ParamPanel 로 ParamSpec 에서 자동 생성(R2). 하드코딩 컨트롤 없음.
 	import { onDestroy, onMount } from 'svelte';
-	import { NodeCard, Slider, Toggle } from '$lib/design';
+	import { NodeCard, ParamPanel } from '$lib/design';
 	import { ConodeClient } from '$lib/protocol/client.svelte';
 	import '$lib/design/gallery.css';
 
 	const client = new ConodeClient();
-
-	// camera controls
-	let exposure = $state(0.5);
-	let mirror = $state(true);
-	// canny controls
-	let cannyLow = $state(80);
-	let cannyHigh = $state(160);
-
 	onMount(() => client.connect());
 	onDestroy(() => client.disconnect());
 
-	// UI→engine param.set (연결 후에만)
-	$effect(() => {
-		const v = exposure;
-		if (client.status === 'open') client.setParam('cam1', 'exposure', v);
-	});
-	$effect(() => {
-		const v = mirror;
-		if (client.status === 'open') client.setParam('cam1', 'mirror', v);
-	});
-	$effect(() => {
-		const v = cannyLow;
-		if (client.status === 'open') client.setParam('canny1', 'low', v);
-	});
-	$effect(() => {
-		const v = cannyHigh;
-		if (client.status === 'open') client.setParam('canny1', 'high', v);
-	});
+	const specs = (n: { params?: Record<string, unknown> }) =>
+		(n.params ?? {}) as Record<string, Record<string, unknown>>;
 </script>
 
 <div class="dg-page">
 	<header>
 		<h1 class="dg-h1">conode · live</h1>
-		<p class="dg-sub mono">M3 — 제스처 = 영역 디퓨전 · Camera → Hand → Gesture → RegionMask → LiveDiffusion</p>
+		<p class="dg-sub mono">파라미터는 ParamSpec 에서 자동 생성 (R2) · Camera → 비전/제스처 → 디퓨전 → 오디오/출력</p>
 		<nav class="dg-nav mono">
 			<a href="/design">design</a>
 			<a href="/nodes">nodes</a>
 			<a href="/live">live</a>
 			<a href="/quad">quad</a>
+			<a href="/graph">graph</a>
+			<a href="/audio">audio</a>
+			<a href="/output">output</a>
 		</nav>
 		<div
 			class="dg-status mono"
@@ -59,7 +38,7 @@
 	</header>
 
 	<section class="dg-section">
-		<h2 class="dg-section-title">Graph — 프레임 제스처 = 영역 디퓨전 (§2)</h2>
+		<h2 class="dg-section-title">Graph — 노드 {client.nodes.length}개 (파라미터 자동 생성)</h2>
 		<div class="dg-nodes">
 			{#each client.nodes as node (node.id)}
 				{@const f = client.frames[node.id]}
@@ -76,13 +55,7 @@
 						fpsMode: 'auto'
 					}}
 				>
-					{#if node.id === 'cam1'}
-						<Slider label="exposure" bind:value={exposure} min={0} max={1} step={0.01} accent="var(--cat-input)" />
-						<Toggle label="mirror" bind:value={mirror} />
-					{:else if node.id === 'canny1'}
-						<Slider label="low" bind:value={cannyLow} min={0} max={255} step={1} accent="var(--cat-vision)" />
-						<Slider label="high" bind:value={cannyHigh} min={0} max={255} step={1} accent="var(--cat-vision)" />
-					{/if}
+					<ParamPanel params={specs(node)} node={node.id} {client} accent="var(--cat-{node.category})" />
 					{#snippet preview()}
 						{#if f}
 							<img class="dg-preview-img" src={f.url} alt="{node.name} preview" />

@@ -6,8 +6,13 @@
   "x-protocol-version": 0,
   "$defs": {
     "ParamValue": {
-      "description": "modulatable 파라미터 값 — number|string|boolean.",
-      "oneOf": [{ "type": "number" }, { "type": "string" }, { "type": "boolean" }]
+      "description": "파라미터 값 — number|string|boolean|number[] (MultiMarkerSlider markers).",
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string" },
+        { "type": "boolean" },
+        { "type": "array", "items": { "type": "number" } }
+      ]
     },
     "Category": {
       "type": "string",
@@ -23,7 +28,8 @@
         "category": { "$ref": "#/$defs/Category" },
         "index": { "type": "integer" },
         "node_type": { "type": "string" },
-        "inputs": { "type": "array", "items": { "type": "string" } }
+        "inputs": { "type": "array", "items": { "type": "string" } },
+        "params": { "type": "object", "additionalProperties": true }
       }
     },
     "Hello": {
