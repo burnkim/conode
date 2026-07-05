@@ -38,7 +38,7 @@ class DemoNode(Processor):
         ),
     }
 
-    def process(self, ctx: FrameCtx):
+    def process(self, ctx: FrameCtx, inputs: dict):
         return ctx.seq
 
 

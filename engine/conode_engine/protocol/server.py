@@ -35,6 +35,7 @@ class EngineServer:
         self.port = port
         self.nodes: dict[str, Processor] = {n.id: n for n in (nodes or [])}
         self.clients: set = set()
+        self.graph = None  # T9: graph 메시지에서 사용
 
     def node_infos(self) -> list[NodeInfo]:
         return [

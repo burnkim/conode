@@ -15,6 +15,18 @@
 ## M0 완료 (2026-07-05)
 T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pytest 30.
 
+# TODO — M1 Vision Pipeline
+- [x] T7 엔진 그래프 코어 — 노드 입력 포트 + 연결(Graph, topo 평가) + 노드간 프레임 전달 + preview 인코더 분리. 완료조건: pytest — Camera→Canny 연결 시 프레임 전파.
+      ↳ 2026-07-05 완료: Processor에 inputs 포트+output+tick(ms 측정), core/graph.Graph(add/connect/remove/topo/evaluate, 사이클 거부), core/preview.encode_jpeg 분리. Camera.process는 numpy 반환으로 리팩터(프레임/프리뷰 경로 분리, R5). pytest 37 passed(test_graph 6 추가).
+- [x] T8 Canny 노드 (OpenCV) — Camera→Canny E2E, /live 다중 노드 프리뷰. 완료조건: Canny 엣지 프리뷰가 NodeCard에 표시.
+      ↳ 2026-07-05 완료: nodes/canny.py(low/high/invert). app.py 그래프 cam1→canny1, 노드별 preview broadcast. /live를 client.nodes 루프 다중 NodeCard로. E2E: 실카메라 + Canny 엣지 프리뷰 2카드, 28fps 초록 배지, low/high param.set 배선. docs/verify/T8-camera-canny.png. (T7+T8 한 슬라이스로 함께 검증·커밋)
+- [ ] T9 프로토콜 확장 — graph 메시지(graph.get/node.add/node.connect/node.remove) 스키마 + zod/pydantic 재생성 + 계약 테스트.
+- [ ] T10 Pose 노드 (MediaPipe, 폴백) — 스켈레톤 오버레이 프리뷰.
+- [ ] T11 Depth 노드 (경량 모델/근사, 폴백) — 뎁스맵 프리뷰.
+- [ ] T12 Segmentation 노드 (MediaPipe SelfieSeg/YOLOv8-seg, 폴백) — 마스크 프리뷰.
+- [ ] T13 쿼드뷰 UI — 4분할 노드 프리뷰 레이아웃.
+- [ ] T14 노드 그래프 편집 UI — 캔버스 노드 배치/연결선/삭제/저장(직렬화 왕복).
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).
