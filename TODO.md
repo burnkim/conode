@@ -29,7 +29,8 @@ T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pyte
 - [x] T12 Segmentation 노드 (MediaPipe SelfieSeg, 폴백) — 마스크 프리뷰.
       ↳ 2026-07-05 완료: nodes/segmentation.py MediaPipe ImageSegmenter(confidence mask), cutout/mask/blur_bg 합성. 폴백=중앙근사. 4.7ms/frame.
       ↳ 공통: core/models.py 다운로더(models/ 캐시, PLAN §7), Processor.tick 노드 크래시 격리. mediapipe 의존성(Apache2.0). pytest 44. /live 5노드 28fps. docs/verify/T10-12-vision-pipeline.png.
-- [ ] T13 쿼드뷰 UI — 4분할 노드 프리뷰 레이아웃.
+- [x] T13 쿼드뷰 UI — 4분할 노드 프리뷰 레이아웃.
+      ↳ 2026-07-05 완료: /quad 라우트, 비전 4노드 2x2 그리드(16:9 셀 + name/fps health 오버레이). design/gallery.css dg-quad. E2E: 사람 인프레임 시 Canny 엣지·Pose 스켈레톤·Depth·Seg 컷아웃 전부 29fps. docs/verify/T13-quadview.png.
 - [ ] T14 노드 그래프 편집 UI — 캔버스 노드 배치/연결선/삭제/저장(직렬화 왕복).
 
 ## Questions / 리뷰 대기 (기획 세션)

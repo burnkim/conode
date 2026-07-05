@@ -46,6 +46,7 @@
 			<a href="/design">design</a>
 			<a href="/nodes">nodes</a>
 			<a href="/live">live</a>
+			<a href="/quad">quad</a>
 		</nav>
 		<div
 			class="dg-status mono"
