@@ -65,11 +65,20 @@ class Graph:
     def evaluate(self, ctx: FrameCtx) -> None:
         for nid in self.topo():
             node = self.nodes[nid]
+            # 노드별 fps 게이팅 (§1.2): 간격 미달이면 스킵 — 이전 output 유지(latest-wins).
+            fps = node.target_fps
+            if fps and node._last_tick_t >= 0 and (ctx.t - node._last_tick_t) < 1.0 / fps:
+                continue
             inputs = {}
             for port, src in self.edges.get(nid, {}).items():
                 src_node = self.nodes.get(src)
                 inputs[port] = src_node.output if src_node else None
+            dt = ctx.t - node._last_tick_t if node._last_tick_t >= 0 else 0.0
             node.tick(ctx, inputs)
+            if dt > 0:
+                inst = 1.0 / dt
+                node.measured_fps = inst if node.measured_fps == 0 else node.measured_fps * 0.9 + inst * 0.1
+            node._last_tick_t = ctx.t
 
     def describe(self) -> dict:
         return {

@@ -93,6 +93,26 @@ def test_tick_isolates_node_errors():
     assert "boom" in (g.nodes["b"].last_error or "")
 
 
+def test_fps_gating_skips_and_persists_output():
+    g = Graph()
+    g.add(_Src("s", _edge_image()))
+    c = Canny("c")
+    c.target_fps = 10.0  # 0.1s 간격
+    g.add(c)
+    g.connect("s", "c", "in")
+
+    g.evaluate(FrameCtx(t=0.0))
+    assert c.tick_count == 1
+    out_after_first = c.output
+
+    g.evaluate(FrameCtx(t=0.05))  # 간격 미달 → 스킵
+    assert c.tick_count == 1
+    assert c.output is out_after_first  # latest-wins: 이전 output 유지
+
+    g.evaluate(FrameCtx(t=0.15))  # 간격 경과 → tick
+    assert c.tick_count == 2
+
+
 def test_describe_has_nodes_and_edges():
     g = Graph()
     g.add(_Src("s", _edge_image()))

@@ -26,6 +26,7 @@ class Processor:
     name: str = "Node"
     kind: str = "node"  # node_registry 키 (node.add 재구성용)
     inputs: tuple[str, ...] = ()  # 입력 포트 이름들 (소스 노드는 빈 튜플)
+    target_fps: float | None = None  # None = 매 프레임. 설정 시 그 fps 로 게이팅 (§1.2)
     params: dict[str, Any] = {}
 
     def __init__(self, node_id: str, index: int = 0):
@@ -34,6 +35,8 @@ class Processor:
         self.store = ParamStore(type(self).params)
         self.tick_count = 0
         self.last_ms = 0.0
+        self.measured_fps = 0.0  # 실측 tick 레이트 (EMA) — 노드별 fps 표시용
+        self._last_tick_t = -1e9
         self.last_error: Optional[str] = None
         self.output: Any = None  # 최신 출력 (다운스트림이 읽음 — 프레임 또는 구조화 데이터)
         self.preview: Any = None  # 구조화 output 노드가 표시용 프레임을 여기 둔다

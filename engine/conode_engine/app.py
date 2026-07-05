@@ -36,6 +36,7 @@ def build_graph() -> tuple[Graph, Camera]:
     gesture = GestureRecognizer("gesture1", index=4)
     region = RegionMask("region1", index=5)
     live = LiveDiffusion("live1", index=6)
+    live.target_fps = 15.0  # 무거운 노드는 낮은 fps — 다운스트림은 latest-wins (§1.2)
     audio = AudioIn("audio1", index=7)
     mod = ModMatrix("mod1", index=8)
     mapped = MappedOutput("mapped1", index=9)
@@ -90,7 +91,7 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
                             node=node.id,
                             w=w,
                             h=h,
-                            fps=round(ema_fps, 1),
+                            fps=round(node.measured_fps or ema_fps, 1),  # 노드별 실측 fps
                             ms=round(node.last_ms, 1),
                             format="jpeg",
                             seq=seq,
