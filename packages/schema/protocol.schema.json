@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conode.dev/schema/protocol/v0",
+  "title": "conode protocol v0",
+  "description": "UI(apps/studio) ↔ engine(conode_engine) WS 메시지 계약. 이 파일이 원천이며 zod/pydantic 양쪽을 생성한다 (R3). 수정 후 `pnpm --filter @conode/schema generate` 재실행.",
+  "x-protocol-version": 0,
+  "$defs": {
+    "ParamValue": {
+      "description": "modulatable 파라미터 값 — number|string|boolean.",
+      "oneOf": [{ "type": "number" }, { "type": "string" }, { "type": "boolean" }]
+    },
+    "Category": {
+      "type": "string",
+      "enum": ["input", "vision", "depth", "generate", "audio", "output"]
+    },
+    "NodeInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "category", "index"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "$ref": "#/$defs/Category" },
+        "index": { "type": "integer" }
+      }
+    },
+    "Hello": {
+      "type": "object",
+      "description": "핸드셰이크. 연결 직후 양측이 교환.",
+      "additionalProperties": false,
+      "required": ["type", "v", "role"],
+      "properties": {
+        "type": { "const": "hello" },
+        "v": { "const": 0 },
+        "role": { "type": "string", "enum": ["ui", "engine"] },
+        "app": { "type": "string" }
+      }
+    },
+    "NodeList": {
+      "type": "object",
+      "description": "현재 그래프의 노드 목록.",
+      "additionalProperties": false,
+      "required": ["type", "v", "nodes"],
+      "properties": {
+        "type": { "const": "node.list" },
+        "v": { "const": 0 },
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/NodeInfo" } }
+      }
+    },
+    "ParamSet": {
+      "type": "object",
+      "description": "파라미터 값 변경 (UI→engine). path 예: 'controlnet.weight'.",
+      "additionalProperties": false,
+      "required": ["type", "v", "node", "path", "value"],
+      "properties": {
+        "type": { "const": "param.set" },
+        "v": { "const": 0 },
+        "node": { "type": "string" },
+        "path": { "type": "string" },
+        "value": { "$ref": "#/$defs/ParamValue" }
+      }
+    },
+    "FramePreview": {
+      "type": "object",
+      "description": "프리뷰 프레임 (engine→UI). data = base64(JPEG/WebP). 최종 출력은 UI 경유 금지(R5) — 이건 프리뷰 전용.",
+      "additionalProperties": false,
+      "required": ["type", "v", "node", "w", "h", "fps", "ms", "format", "seq", "data"],
+      "properties": {
+        "type": { "const": "frame.preview" },
+        "v": { "const": 0 },
+        "node": { "type": "string" },
+        "w": { "type": "integer" },
+        "h": { "type": "integer" },
+        "fps": { "type": "number" },
+        "ms": { "type": "number" },
+        "format": { "type": "string", "enum": ["jpeg", "webp"] },
+        "seq": { "type": "integer" },
+        "data": { "type": "string" }
+      }
+    },
+    "Message": {
+      "description": "모든 프로토콜 메시지의 판별 유니온 (discriminator: type).",
+      "oneOf": [
+        { "$ref": "#/$defs/Hello" },
+        { "$ref": "#/$defs/NodeList" },
+        { "$ref": "#/$defs/ParamSet" },
+        { "$ref": "#/$defs/FramePreview" }
+      ]
+    }
+  },
+  "$ref": "#/$defs/Message"
+}

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "conode-engine"
+version = "0.0.0"
+description = "conode 실시간 그래프 엔진 (PyTorch/TensorRT 타깃). PLAN §1."
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "pydantic>=2.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+# 런타임(카메라·WS·프레임 인코딩)은 T5/T6에서 사용. 무거운 휠(opencv)이라 분리.
+runtime = [
+  "websockets>=12",
+  "numpy>=1.26",
+  "opencv-python>=4.9",
+  "pillow>=10",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["conode_engine"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

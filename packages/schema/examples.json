@@ -1,0 +1,50 @@
+{
+  "_comment": "프로토콜 계약 픽스처 — zod(TS)·pydantic(Python) 양쪽 테스트가 공유. R3.",
+  "valid": [
+    { "type": "hello", "v": 0, "role": "ui", "app": "conode-studio/0.0.0" },
+    { "type": "hello", "v": 0, "role": "engine" },
+    {
+      "type": "node.list",
+      "v": 0,
+      "nodes": [
+        { "id": "cam1", "name": "Camera", "category": "input", "index": 1 },
+        { "id": "gen1", "name": "LiveDiffusion", "category": "generate", "index": 4 }
+      ]
+    },
+    { "type": "param.set", "v": 0, "node": "cam1", "path": "exposure", "value": 0.5 },
+    { "type": "param.set", "v": 0, "node": "gen1", "path": "prompt", "value": "a field of stars" },
+    { "type": "param.set", "v": 0, "node": "gen1", "path": "controlnet.enable", "value": true },
+    {
+      "type": "frame.preview",
+      "v": 0,
+      "node": "cam1",
+      "w": 320,
+      "h": 240,
+      "fps": 30,
+      "ms": 5.2,
+      "format": "jpeg",
+      "seq": 1,
+      "data": "/9j/4AAQSkZJRgABAQAAAQ=="
+    }
+  ],
+  "invalid": [
+    { "type": "hello", "v": 0, "role": "server" },
+    { "type": "hello", "v": 0, "role": "ui", "extra": 1 },
+    { "type": "hello", "v": 1, "role": "ui" },
+    { "type": "node.list", "v": 0 },
+    { "type": "param.set", "v": 0, "node": "x", "path": "y" },
+    {
+      "type": "frame.preview",
+      "v": 0,
+      "node": "c",
+      "w": 320,
+      "h": 240,
+      "fps": 30,
+      "ms": 5,
+      "format": "png",
+      "seq": 1,
+      "data": "AA"
+    },
+    { "type": "unknown.msg", "v": 0 }
+  ]
+}

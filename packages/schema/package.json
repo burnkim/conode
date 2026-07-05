@@ -1,0 +1,11 @@
+{
+  "name": "@conode/schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "conode 프로토콜 스키마 — protocol.schema.json 원천, zod/pydantic 생성",
+  "main": "protocol.schema.json",
+  "scripts": {
+    "generate": "node generate.mjs"
+  }
+}

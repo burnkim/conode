@@ -12,6 +12,8 @@
     "dev": "pnpm --filter @conode/studio dev",
     "build": "pnpm --filter @conode/studio build",
     "check": "pnpm --filter @conode/studio check",
+    "test": "pnpm --filter @conode/studio test",
+    "schema:generate": "pnpm --filter @conode/schema generate",
     "tauri": "pnpm --filter @conode/studio tauri"
   }
 }
