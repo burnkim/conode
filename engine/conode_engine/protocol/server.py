@@ -34,12 +34,14 @@ from .messages import (
 
 def node_registry() -> dict:
     """node_type → 클래스. 무거운 임포트(cv2/mediapipe)를 지연."""
+    from ..nodes.audio_in import AudioIn
     from ..nodes.camera import Camera
     from ..nodes.canny import Canny
     from ..nodes.depth import Depth
     from ..nodes.gesture_recognizer import GestureRecognizer
     from ..nodes.hand_tracker import HandTracker
     from ..nodes.live_diffusion import LiveDiffusion
+    from ..nodes.mod_matrix import ModMatrix
     from ..nodes.pose import Pose
     from ..nodes.region_mask import RegionMask
     from ..nodes.segmentation import Segmentation
@@ -54,6 +56,8 @@ def node_registry() -> dict:
         "hand_tracker": HandTracker,
         "gesture_recognizer": GestureRecognizer,
         "region_mask": RegionMask,
+        "audio_in": AudioIn,
+        "mod_matrix": ModMatrix,
     }
 
 
@@ -152,6 +156,8 @@ class EngineServer:
         if nid in self.graph.nodes:
             return
         node = cls(nid, index=len(self.graph.nodes) + 1)
+        if hasattr(node, "graph"):
+            node.graph = self.graph  # ModMatrix 등 그래프 참조 노드
         # start()/stop()는 메인(이벤트 루프) 스레드에서 호출한다. MediaPipe/GL 객체는
         # 스레드 친화성이 있어 to_thread 로 생성/해제하면 세그폴트가 난다. 모델 로드
         # 블록(≈1s)은 허용.

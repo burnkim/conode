@@ -67,6 +67,17 @@ pytest 56 · vitest 26 · svelte-check 0/0.
 ## M3 완료 (2026-07-05)
 T21~T24 전부 완료·검증(Mac). 시그니처 "프레임 제스처=영역 디퓨전" 동작. pytest 78.
 
+# TODO — M4 오디오 12스템 ModMatrix (시그니처 B, PLAN §3)
+- [x] T25 AudioIn 노드 — sounddevice 멀티채널(디바이스) + 12스템 합성, 채널별 최신 블록. [Mac 검증]
+- [x] T26 특성 추출 — 채널별 rms/peak/onset/centroid/flux/band(low/mid/high) 정규화 0..1 (numpy FFT, 적응 정규화). [Mac 검증]
+- [x] T27 ModMatrix — 소스(스템×특성+LFO)×타깃 매트릭스(amount/curve/smooth/clamp), base+모듈레이션, modulatable만 적용(R8). [Mac 검증]
+- [x] T28 프롬프트 바인딩 — (token:{stem.feature}) 파싱+가중치 치환, ModMatrix 노드가 타깃 prompt에 push. [Mac 검증]
+- [x] T29 ModMatrix UI — /audio(12스템 미터 + 적용타깃 + modulated) + Slider 모듈레이션 링(도넛 §3.3). [Mac 검증]
+      ↳ 2026-07-05 M4 완료: audio/{capture,features,modmatrix,prompt_binding}, nodes/{audio_in,mod_matrix}. 그래프 audio→mod, mod가 live1.prompt_strength·controlnet.weight·cam1.exposure(LFO) 모듈레이션 + prompt 바인딩. Processor.param_range/is_modulatable. /audio·/design mod-ring. pytest 86. docs/verify/T25-29-audio-modmatrix.png.
+
+## M4 완료 (2026-07-05)
+T25~T29 전부 완료·검증(Mac). 12스템 ModMatrix 라이브 모듈레이션 동작. pytest 86.
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

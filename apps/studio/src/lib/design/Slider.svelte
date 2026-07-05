@@ -9,6 +9,8 @@
 		unit?: string;
 		/** 채움 색 — 노드 카테고리색 주입용. 기본 파생 토큰. */
 		accent?: string;
+		/** 모듈레이션 양 0..1 (있으면 우측에 도넛 링 표시, §3.3). */
+		mod?: number;
 	}
 	let {
 		label = '',
@@ -17,8 +19,12 @@
 		max = 1,
 		step = 0,
 		unit = '',
-		accent = 'var(--field-fill)'
+		accent = 'var(--field-fill)',
+		mod = undefined
 	}: Props = $props();
+
+	const CIRC = 43.98; // 2πr, r=7
+	const modDash = $derived(mod == null ? 0 : Math.max(0, Math.min(1, mod)) * CIRC);
 
 	let track = $state<HTMLDivElement>();
 	let dragging = $state(false);
@@ -81,6 +87,12 @@
 	<div class="fill" style="width: {pct}%; background: {accent};"></div>
 	<span class="label">{label}</span>
 	<span class="value mono">{display}</span>
+	{#if mod != null}
+		<svg class="modring" viewBox="0 0 20 20" aria-hidden="true">
+			<circle class="mr-track" cx="10" cy="10" r="7" />
+			<circle class="mr-arc" cx="10" cy="10" r="7" style="stroke-dasharray: {modDash} {CIRC};" />
+		</svg>
+	{/if}
 </div>
 
 <style>
@@ -118,9 +130,30 @@
 		position: relative;
 		z-index: 1;
 		margin-left: auto;
-		padding-right: calc(var(--space-unit) * 3);
+		padding-right: calc(var(--space-unit) * 2);
 		color: var(--text-hi);
 		font-size: var(--fs-value);
 		pointer-events: none;
+	}
+	.modring {
+		position: relative;
+		z-index: 1;
+		width: 16px;
+		height: 16px;
+		margin-right: calc(var(--space-unit) * 2);
+		transform: rotate(-90deg);
+		flex: none;
+		pointer-events: none;
+	}
+	.mr-track {
+		fill: none;
+		stroke: var(--bg-canvas);
+		stroke-width: 3;
+	}
+	.mr-arc {
+		fill: none;
+		stroke: var(--cat-audio);
+		stroke-width: 3;
+		stroke-linecap: round;
 	}
 </style>

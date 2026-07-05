@@ -48,6 +48,14 @@ class Processor:
     def modulation_targets(self) -> list[str]:
         return self.store.modulation_targets()
 
+    def param_range(self, path: str) -> tuple[float, float]:
+        s = self.store._specs.get(path)
+        return (float(getattr(s, "lo", 0.0)), float(getattr(s, "hi", 1.0)))
+
+    def is_modulatable(self, path: str) -> bool:
+        s = self.store._specs.get(path)
+        return bool(getattr(s, "modulatable", False))
+
     # --- 수명주기 (무거운 준비는 여기서, tick 밖에서 — R4) ---
     def start(self) -> None:
         """그래프 시작 전 1회. 모델 로드/캡처 스레드 등 blocking 준비."""

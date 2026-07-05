@@ -89,6 +89,7 @@
 					accent="var(--cat-generate)"
 				/>
 				<Slider label="sif_threshold" bind:value={sifThreshold} min={0} max={1} step={0.01} />
+				<Slider label="strength · modulated" bind:value={weight} min={0} max={2} step={0.01} accent="var(--cat-audio)" mod={0.62} />
 			</div>
 
 			<div class="dg-widget">

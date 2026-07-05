@@ -14,26 +14,30 @@ import websockets
 from .core.graph import Graph
 from .core.preview import encode_jpeg, frame_size
 from .core.processor import FrameCtx
+from .nodes.audio_in import AudioIn
 from .nodes.camera import Camera
 from .nodes.canny import Canny
 from .nodes.gesture_recognizer import GestureRecognizer
 from .nodes.hand_tracker import HandTracker
 from .nodes.live_diffusion import LiveDiffusion
+from .nodes.mod_matrix import ModMatrix
 from .nodes.region_mask import RegionMask
 from .protocol.messages import FramePreview
 from .protocol.server import EngineServer
 
 
 def build_graph() -> tuple[Graph, Camera]:
-    # M3 시그니처: 프레임 제스처 = 영역 디퓨전 (§2)
+    # M3 제스처=영역 디퓨전 (§2) + M4 오디오 ModMatrix (§3)
     cam = Camera("cam1", index=1)
     canny = Canny("canny1", index=2)
     hands = HandTracker("hands1", index=3)
     gesture = GestureRecognizer("gesture1", index=4)
     region = RegionMask("region1", index=5)
     live = LiveDiffusion("live1", index=6)
+    audio = AudioIn("audio1", index=7)
+    mod = ModMatrix("mod1", index=8)
     graph = Graph()
-    for n in (cam, canny, hands, gesture, region, live):
+    for n in (cam, canny, hands, gesture, region, live, audio, mod):
         graph.add(n)
     graph.connect("cam1", "canny1", "in")
     graph.connect("cam1", "hands1", "in")
@@ -42,6 +46,8 @@ def build_graph() -> tuple[Graph, Camera]:
     graph.connect("cam1", "live1", "in")
     graph.connect("canny1", "live1", "control")  # ControlNet
     graph.connect("region1", "live1", "mask")  # 제스처 영역만 디퓨전
+    graph.connect("audio1", "mod1", "audio")  # 오디오 특성 → ModMatrix
+    mod.graph = graph  # ModMatrix 는 그래프 파라미터를 모듈레이션
     return graph, cam
 
 
