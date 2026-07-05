@@ -19,6 +19,12 @@ class NodeInfo(BaseModel):
     category: Category
     index: int
 
+class Edge(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    src: str
+    dst: str
+    port: str
+
 class Hello(BaseModel):
     model_config = ConfigDict(extra="forbid")
     type: Literal["hello"] = "hello"
@@ -53,7 +59,47 @@ class FramePreview(BaseModel):
     seq: int
     data: str
 
-Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview], Field(discriminator="type")]
+class GraphGet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["graph.get"] = "graph.get"
+    v: Literal[0] = 0
+
+class GraphState(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["graph.state"] = "graph.state"
+    v: Literal[0] = 0
+    nodes: list[NodeInfo]
+    edges: list[Edge]
+
+class NodeAdd(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["node.add"] = "node.add"
+    v: Literal[0] = 0
+    node_type: str
+    id: Optional[str] = None
+
+class NodeRemove(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["node.remove"] = "node.remove"
+    v: Literal[0] = 0
+    node: str
+
+class NodeConnect(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["node.connect"] = "node.connect"
+    v: Literal[0] = 0
+    src: str
+    dst: str
+    port: str
+
+class NodeDisconnect(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["node.disconnect"] = "node.disconnect"
+    v: Literal[0] = 0
+    dst: str
+    port: str
+
+Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect], Field(discriminator="type")]
 _ADAPTER: TypeAdapter[Message] = TypeAdapter(Message)
 
 

@@ -20,6 +20,15 @@ export const NodeInfo = z
 	.strict();
 export type NodeInfo = z.infer<typeof NodeInfo>;
 
+export const Edge = z
+	.object({
+	"src": z.string(),
+	"dst": z.string(),
+	"port": z.string()
+	})
+	.strict();
+export type Edge = z.infer<typeof Edge>;
+
 export const Hello = z
 	.object({
 	"type": z.literal("hello"),
@@ -66,7 +75,65 @@ export const FramePreview = z
 	.strict();
 export type FramePreview = z.infer<typeof FramePreview>;
 
-export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview]);
+export const GraphGet = z
+	.object({
+	"type": z.literal("graph.get"),
+	"v": z.literal(0)
+	})
+	.strict();
+export type GraphGet = z.infer<typeof GraphGet>;
+
+export const GraphState = z
+	.object({
+	"type": z.literal("graph.state"),
+	"v": z.literal(0),
+	"nodes": z.array(NodeInfo),
+	"edges": z.array(Edge)
+	})
+	.strict();
+export type GraphState = z.infer<typeof GraphState>;
+
+export const NodeAdd = z
+	.object({
+	"type": z.literal("node.add"),
+	"v": z.literal(0),
+	"node_type": z.string(),
+	"id": z.string().optional()
+	})
+	.strict();
+export type NodeAdd = z.infer<typeof NodeAdd>;
+
+export const NodeRemove = z
+	.object({
+	"type": z.literal("node.remove"),
+	"v": z.literal(0),
+	"node": z.string()
+	})
+	.strict();
+export type NodeRemove = z.infer<typeof NodeRemove>;
+
+export const NodeConnect = z
+	.object({
+	"type": z.literal("node.connect"),
+	"v": z.literal(0),
+	"src": z.string(),
+	"dst": z.string(),
+	"port": z.string()
+	})
+	.strict();
+export type NodeConnect = z.infer<typeof NodeConnect>;
+
+export const NodeDisconnect = z
+	.object({
+	"type": z.literal("node.disconnect"),
+	"v": z.literal(0),
+	"dst": z.string(),
+	"port": z.string()
+	})
+	.strict();
+export type NodeDisconnect = z.infer<typeof NodeDisconnect>;
+
+export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect]);
 export type Message = z.infer<typeof Message>;
 
 export function parseMessage(u: unknown): Message {

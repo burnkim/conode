@@ -15,7 +15,22 @@ const refName = (ref) => ref.split('/').pop();
 const isMessage = (d) => d.type === 'object' && d.properties?.type?.const !== undefined;
 
 // 생성 순서: 지원 타입 → 메시지 → 유니온
-const ORDER = ['ParamValue', 'Category', 'NodeInfo', 'Hello', 'NodeList', 'ParamSet', 'FramePreview'];
+const ORDER = [
+	'ParamValue',
+	'Category',
+	'NodeInfo',
+	'Edge',
+	'Hello',
+	'NodeList',
+	'ParamSet',
+	'FramePreview',
+	'GraphGet',
+	'GraphState',
+	'NodeAdd',
+	'NodeRemove',
+	'NodeConnect',
+	'NodeDisconnect'
+];
 const MESSAGES = ORDER.filter((n) => isMessage(defs[n]));
 
 const jsonLit = (v) => JSON.stringify(v);

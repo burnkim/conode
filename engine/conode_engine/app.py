@@ -40,8 +40,7 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
     graph, cam = build_graph()
     for node in graph.nodes.values():
         node.start()  # 캡처 스레드/모델 로드 등 무거운 준비 (R4: tick 밖)
-    server = EngineServer(nodes=list(graph.nodes.values()), host=host, port=port)
-    server.graph = graph
+    server = EngineServer(graph=graph, host=host, port=port)
     period = 1.0 / target_fps
 
     async def broadcaster() -> None:
@@ -59,7 +58,7 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
                 inst = 1.0 / dt if dt > 0 else 0.0
                 ema_fps = inst if ema_fps == 0.0 else ema_fps * 0.9 + inst * 0.1
                 seq += 1
-                for node in graph.nodes.values():
+                for node in list(graph.nodes.values()):  # 그래프 편집 중 안전 순회
                     payload = encode_jpeg(node.output)
                     if payload is None:
                         continue

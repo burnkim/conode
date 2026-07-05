@@ -25,7 +25,19 @@
       "format": "jpeg",
       "seq": 1,
       "data": "/9j/4AAQSkZJRgABAQAAAQ=="
-    }
+    },
+    { "type": "graph.get", "v": 0 },
+    {
+      "type": "graph.state",
+      "v": 0,
+      "nodes": [{ "id": "cam1", "name": "Camera", "category": "input", "index": 1 }],
+      "edges": [{ "src": "cam1", "dst": "canny1", "port": "in" }]
+    },
+    { "type": "node.add", "v": 0, "node_type": "canny" },
+    { "type": "node.add", "v": 0, "node_type": "canny", "id": "canny2" },
+    { "type": "node.remove", "v": 0, "node": "canny1" },
+    { "type": "node.connect", "v": 0, "src": "cam1", "dst": "canny1", "port": "in" },
+    { "type": "node.disconnect", "v": 0, "dst": "canny1", "port": "in" }
   ],
   "invalid": [
     { "type": "hello", "v": 0, "role": "server" },
@@ -45,6 +57,9 @@
       "seq": 1,
       "data": "AA"
     },
-    { "type": "unknown.msg", "v": 0 }
+    { "type": "unknown.msg", "v": 0 },
+    { "type": "node.add", "v": 0 },
+    { "type": "node.connect", "v": 0, "src": "a", "dst": "b" },
+    { "type": "graph.state", "v": 0, "nodes": [] }
   ]
 }

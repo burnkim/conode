@@ -20,7 +20,8 @@ T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pyte
       ↳ 2026-07-05 완료: Processor에 inputs 포트+output+tick(ms 측정), core/graph.Graph(add/connect/remove/topo/evaluate, 사이클 거부), core/preview.encode_jpeg 분리. Camera.process는 numpy 반환으로 리팩터(프레임/프리뷰 경로 분리, R5). pytest 37 passed(test_graph 6 추가).
 - [x] T8 Canny 노드 (OpenCV) — Camera→Canny E2E, /live 다중 노드 프리뷰. 완료조건: Canny 엣지 프리뷰가 NodeCard에 표시.
       ↳ 2026-07-05 완료: nodes/canny.py(low/high/invert). app.py 그래프 cam1→canny1, 노드별 preview broadcast. /live를 client.nodes 루프 다중 NodeCard로. E2E: 실카메라 + Canny 엣지 프리뷰 2카드, 28fps 초록 배지, low/high param.set 배선. docs/verify/T8-camera-canny.png. (T7+T8 한 슬라이스로 함께 검증·커밋)
-- [ ] T9 프로토콜 확장 — graph 메시지(graph.get/node.add/node.connect/node.remove) 스키마 + zod/pydantic 재생성 + 계약 테스트.
+- [x] T9 프로토콜 확장 — graph 메시지(graph.get/node.add/node.connect/node.remove) 스키마 + zod/pydantic 재생성 + 계약 테스트.
+      ↳ 2026-07-05 완료: schema에 Edge + graph.get/graph.state/node.add/remove/connect/disconnect 추가, zod/pydantic 재생성. 서버 registry+핸들러(변경 시 graph.state broadcast, 연결 시 hello→node.list→graph.state), 클라이언트 edges 상태 + 편집 메서드. 계약(examples 10↑) + WS 편집(connect/disconnect/add/remove) 테스트. pytest 55 · vitest 26 · svelte-check 0/0.
 - [x] T10 Pose 노드 (MediaPipe, 폴백) — 스켈레톤 오버레이 프리뷰.
       ↳ 2026-07-05 완료: nodes/pose.py MediaPipe PoseLandmarker(Tasks API, start()에서 로드=R4), 스켈레톤 오버레이. 모델 실패 시 폴백. E2E 10.5ms/frame.
 - [x] T11 Depth 노드 (근사, 폴백) — 뎁스맵 프리뷰.

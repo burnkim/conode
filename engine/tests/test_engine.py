@@ -124,9 +124,11 @@ def test_ws_handshake_paramset_and_broadcast():
             async with websockets.connect(f"ws://127.0.0.1:{port}") as ws:
                 hello = json.loads(await ws.recv())
                 nodelist = json.loads(await ws.recv())
+                graphstate = json.loads(await ws.recv())
                 assert hello["type"] == "hello" and hello["role"] == "engine"
                 assert nodelist["type"] == "node.list"
                 assert nodelist["nodes"][0]["id"] == "cam1"
+                assert graphstate["type"] == "graph.state"
 
                 # UI→engine: param.set
                 await ws.send(
@@ -144,5 +146,72 @@ def test_ws_handshake_paramset_and_broadcast():
                 await srv.broadcast(fp)
                 got = json.loads(await ws.recv())
                 assert got["type"] == "frame.preview" and got["node"] == "cam1"
+
+    asyncio.run(scenario())
+
+
+class _InNode(Processor):
+    category = "vision"
+    name = "In"
+    inputs = ("in",)
+
+    def process(self, ctx, inputs):
+        return inputs.get("in")
+
+
+def test_graph_edit_over_ws():
+    async def scenario():
+        from conode_engine.core.graph import Graph
+
+        g = Graph()
+        g.add(DemoNode("cam1", index=1))
+        g.add(_InNode("v1", index=2))
+        srv = EngineServer(graph=g)
+        async with websockets.serve(srv.handler, "127.0.0.1", 0) as server:
+            port = server.sockets[0].getsockname()[1]
+            async with websockets.connect(f"ws://127.0.0.1:{port}") as ws:
+                for _ in range(3):  # hello, node.list, graph.state
+                    await ws.recv()
+
+                await ws.send(
+                    json.dumps({"type": "node.connect", "v": 0, "src": "cam1", "dst": "v1", "port": "in"})
+                )
+                got = json.loads(await ws.recv())
+                assert got["type"] == "graph.state"
+                assert {"src": "cam1", "dst": "v1", "port": "in"} in got["edges"]
+
+                await ws.send(json.dumps({"type": "graph.get", "v": 0}))
+                st = json.loads(await ws.recv())
+                assert st["type"] == "graph.state" and len(st["nodes"]) == 2
+
+                await ws.send(json.dumps({"type": "node.disconnect", "v": 0, "dst": "v1", "port": "in"}))
+                got2 = json.loads(await ws.recv())
+                assert got2["type"] == "graph.state" and got2["edges"] == []
+
+    asyncio.run(scenario())
+
+
+def test_node_add_remove_over_ws():
+    async def scenario():
+        from conode_engine.core.graph import Graph
+
+        g = Graph()
+        g.add(DemoNode("cam1", index=1))
+        srv = EngineServer(graph=g)
+        async with websockets.serve(srv.handler, "127.0.0.1", 0) as server:
+            port = server.sockets[0].getsockname()[1]
+            async with websockets.connect(f"ws://127.0.0.1:{port}") as ws:
+                for _ in range(3):
+                    await ws.recv()
+
+                await ws.send(
+                    json.dumps({"type": "node.add", "v": 0, "node_type": "canny", "id": "canny1"})
+                )
+                st = json.loads(await ws.recv())
+                assert any(n["id"] == "canny1" for n in st["nodes"])
+
+                await ws.send(json.dumps({"type": "node.remove", "v": 0, "node": "canny1"}))
+                st2 = json.loads(await ws.recv())
+                assert not any(n["id"] == "canny1" for n in st2["nodes"])
 
     asyncio.run(scenario())

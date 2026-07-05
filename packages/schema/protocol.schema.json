@@ -78,13 +78,99 @@
         "data": { "type": "string" }
       }
     },
+    "Edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["src", "dst", "port"],
+      "properties": {
+        "src": { "type": "string" },
+        "dst": { "type": "string" },
+        "port": { "type": "string" }
+      }
+    },
+    "GraphGet": {
+      "type": "object",
+      "description": "현재 그래프 상태 요청 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v"],
+      "properties": {
+        "type": { "const": "graph.get" },
+        "v": { "const": 0 }
+      }
+    },
+    "GraphState": {
+      "type": "object",
+      "description": "그래프 전체 상태 (engine→UI). 변경 시마다 브로드캐스트.",
+      "additionalProperties": false,
+      "required": ["type", "v", "nodes", "edges"],
+      "properties": {
+        "type": { "const": "graph.state" },
+        "v": { "const": 0 },
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/NodeInfo" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/Edge" } }
+      }
+    },
+    "NodeAdd": {
+      "type": "object",
+      "description": "노드 추가 (UI→engine). node_type 예: 'canny','pose'.",
+      "additionalProperties": false,
+      "required": ["type", "v", "node_type"],
+      "properties": {
+        "type": { "const": "node.add" },
+        "v": { "const": 0 },
+        "node_type": { "type": "string" },
+        "id": { "type": "string" }
+      }
+    },
+    "NodeRemove": {
+      "type": "object",
+      "description": "노드 삭제 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v", "node"],
+      "properties": {
+        "type": { "const": "node.remove" },
+        "v": { "const": 0 },
+        "node": { "type": "string" }
+      }
+    },
+    "NodeConnect": {
+      "type": "object",
+      "description": "연결 (UI→engine). src.output → dst.port.",
+      "additionalProperties": false,
+      "required": ["type", "v", "src", "dst", "port"],
+      "properties": {
+        "type": { "const": "node.connect" },
+        "v": { "const": 0 },
+        "src": { "type": "string" },
+        "dst": { "type": "string" },
+        "port": { "type": "string" }
+      }
+    },
+    "NodeDisconnect": {
+      "type": "object",
+      "description": "연결 해제 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v", "dst", "port"],
+      "properties": {
+        "type": { "const": "node.disconnect" },
+        "v": { "const": 0 },
+        "dst": { "type": "string" },
+        "port": { "type": "string" }
+      }
+    },
     "Message": {
       "description": "모든 프로토콜 메시지의 판별 유니온 (discriminator: type).",
       "oneOf": [
         { "$ref": "#/$defs/Hello" },
         { "$ref": "#/$defs/NodeList" },
         { "$ref": "#/$defs/ParamSet" },
-        { "$ref": "#/$defs/FramePreview" }
+        { "$ref": "#/$defs/FramePreview" },
+        { "$ref": "#/$defs/GraphGet" },
+        { "$ref": "#/$defs/GraphState" },
+        { "$ref": "#/$defs/NodeAdd" },
+        { "$ref": "#/$defs/NodeRemove" },
+        { "$ref": "#/$defs/NodeConnect" },
+        { "$ref": "#/$defs/NodeDisconnect" }
       ]
     }
   },

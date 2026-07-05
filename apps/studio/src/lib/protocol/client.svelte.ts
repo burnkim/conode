@@ -1,6 +1,6 @@
 // conode WS 클라이언트 (T6). engine 과의 계약은 zod 스키마로만 검증 (R3).
 // Svelte 5 룬 모듈(.svelte.ts) — 상태는 반응형.
-import { Message, type NodeInfo } from './messages';
+import { Message, type Edge, type NodeInfo } from './messages';
 
 export interface FrameState {
 	url: string; // data:image/<fmt>;base64,...
@@ -16,6 +16,7 @@ export type ConnStatus = 'idle' | 'connecting' | 'open' | 'closed';
 export class ConodeClient {
 	status = $state<ConnStatus>('idle');
 	nodes = $state<NodeInfo[]>([]);
+	edges = $state<Edge[]>([]);
 	frames = $state<Record<string, FrameState>>({});
 	rejected = $state(0); // 스키마 위반으로 버린 메시지 수
 
@@ -53,6 +54,9 @@ export class ConodeClient {
 		const msg = r.data;
 		if (msg.type === 'node.list') {
 			this.nodes = msg.nodes;
+		} else if (msg.type === 'graph.state') {
+			this.nodes = msg.nodes;
+			this.edges = msg.edges;
 		} else if (msg.type === 'frame.preview') {
 			this.frames = {
 				...this.frames,
@@ -69,8 +73,29 @@ export class ConodeClient {
 	}
 
 	setParam(node: string, path: string, value: number | string | boolean): void {
+		this.#send({ type: 'param.set', v: 0, node, path, value });
+	}
+
+	// --- 그래프 편집 (T9) — T14 UI 가 사용 ---
+	getGraph(): void {
+		this.#send({ type: 'graph.get', v: 0 });
+	}
+	addNode(nodeType: string, id?: string): void {
+		this.#send(id ? { type: 'node.add', v: 0, node_type: nodeType, id } : { type: 'node.add', v: 0, node_type: nodeType });
+	}
+	removeNode(node: string): void {
+		this.#send({ type: 'node.remove', v: 0, node });
+	}
+	connectNodes(src: string, dst: string, port = 'in'): void {
+		this.#send({ type: 'node.connect', v: 0, src, dst, port });
+	}
+	disconnectNode(dst: string, port = 'in'): void {
+		this.#send({ type: 'node.disconnect', v: 0, dst, port });
+	}
+
+	#send(obj: unknown): void {
 		if (this.#ws?.readyState === WebSocket.OPEN) {
-			this.#ws.send(JSON.stringify({ type: 'param.set', v: 0, node, path, value }));
+			this.#ws.send(JSON.stringify(obj));
 		}
 	}
 
