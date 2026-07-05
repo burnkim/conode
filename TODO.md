@@ -108,7 +108,8 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 - [ ] A2 Scheduler(노드별 fps) + latest-wins 를 라이브 경로에 배선.
 - [x] B §1.3 v1 노드 8종 추가 — Image·Blend·Crossfade·ColorGrade·Switch·MaskCompose·FeedbackLoop·StylePreset (registry 21종, /graph 팔레트 전체). A1 자동 UI 로 파라미터 무료.
       ↳ 2026-07-05: pytest+12(노드 B). 팔레트로 StylePreset 추가→/live 자동 파라미터(enum+slider) 실측. (Video File/EnvelopeFollower/standalone LFO 는 후속.)
-- [ ] C 제스처 JSON 규칙 노드 배선 + 이벤트 버스(씬/프리셋 트리거) + ModMatrix 소스 확장(gesture) + 매트릭스 에디터 UI.
+- [x] C 제스처 JSON 규칙 배선 + ModMatrix 제스처 소스. (이벤트 버스/씬 트리거→D, 매트릭스 에디터 UI→후속)
+      ↳ 2026-07-05: GestureRecognizer custom_rules(JSON)→eval_json_rules 적용. ModMatrix gesture 입력 + gesture.frame/value/point 소스(§3.3), 그래프 gesture→mod, 프레임 제스처가 prompt_strength 밀어올림. pytest+3.
 - [ ] D 큐/씬 시스템 + crossfade + MIDI/OSC In.
 
 ## Questions / 리뷰 대기 (기획 세션)

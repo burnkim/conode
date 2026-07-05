@@ -10,9 +10,11 @@ from typing import Optional
 import cv2
 import numpy as np
 
-from ..core.param_spec import Slider, Toggle
+import json
+
+from ..core.param_spec import Slider, Text, Toggle
 from ..core.processor import FrameCtx, Processor
-from ..gesture.rules import recognize
+from ..gesture.rules import eval_json_rules, recognize
 
 
 class GestureRecognizer(Processor):
@@ -26,6 +28,8 @@ class GestureRecognizer(Processor):
         "point_hold_sec": Slider(0.5, 3.0, default=1.5),
         "palm_size_trigger": Slider(0.3, 0.9, default=0.55),
         "annotate": Toggle(True),
+        # 커스텀 제스처 JSON 규칙(§2 확장) — dist/extended/curled → emit
+        "custom_rules": Text(default="[]", multiline=True),
     }
 
     def __init__(self, node_id: str = "gesture1", index: int = 0):
@@ -45,6 +49,20 @@ class GestureRecognizer(Processor):
             "palm_size_trigger": float(self.get("palm_size_trigger")),
         }
         state = recognize(hands, cfg)
+
+        # 커스텀 JSON 규칙 — 매칭 시 이벤트/타입 덮어씀 (ComfyUI 대비 차별점)
+        raw = self.get("custom_rules")
+        if raw and raw.strip() not in ("", "[]"):
+            try:
+                custom = eval_json_rules(hands, json.loads(raw))
+                if custom is not None:
+                    if custom.get("event"):
+                        state["event"] = custom["event"]
+                    if custom.get("circle"):
+                        state["circle"] = custom["circle"]
+                        state["type"] = custom["type"]
+            except (ValueError, TypeError):
+                pass
 
         # point-hold: 검지 포인팅을 point_hold_sec 이상 유지 → 이벤트
         if state["type"] == "point":

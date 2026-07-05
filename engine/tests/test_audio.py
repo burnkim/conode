@@ -82,6 +82,27 @@ class _Target(Processor):
     params = {"p": Slider(0.0, 2.0, default=1.0, modulatable=True)}
 
 
+def test_modmatrix_gesture_frame_source():
+    mm = ModMatrix()
+    mm.add_cell(ModCell("gesture.frame", "n.p", amount=1.0, smooth_ms=0))
+    store = {"n.p": 0.0}
+    kw = dict(get=lambda k: store[k], set_=lambda k, v: store.__setitem__(k, v), rng=lambda k: (0.0, 2.0), modulatable=lambda k: True)
+    mm.apply({"stems": [], "gesture": {"type": "frame"}}, 0.0, 0.033, **kw)
+    assert abs(store["n.p"] - 2.0) < 1e-6  # frame=1 → 1*1*2
+
+
+def test_modmatrix_gesture_value_source():
+    mm = ModMatrix()
+    mm.add_cell(ModCell("gesture.value", "n.p", amount=1.0, smooth_ms=0))
+    store = {"n.p": 0.0}
+    mm.apply(
+        {"stems": [], "gesture": {"type": "pinch", "value": 0.5}}, 0.0, 0.033,
+        get=lambda k: store[k], set_=lambda k, v: store.__setitem__(k, v),
+        rng=lambda k: (0.0, 2.0), modulatable=lambda k: True,
+    )
+    assert abs(store["n.p"] - 1.0) < 1e-6  # 0.5*2
+
+
 def test_modmatrix_node_modulates_graph():
     g = Graph()
     g.add(_Target("live1"))

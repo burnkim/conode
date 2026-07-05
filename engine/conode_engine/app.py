@@ -52,6 +52,7 @@ def build_graph() -> tuple[Graph, Camera]:
     graph.connect("canny1", "live1", "control")  # ControlNet
     graph.connect("region1", "live1", "mask")  # 제스처 영역만 디퓨전
     graph.connect("audio1", "mod1", "audio")  # 오디오 특성 → ModMatrix
+    graph.connect("gesture1", "mod1", "gesture")  # 제스처 → ModMatrix 소스 (§3.3)
     graph.connect("live1", "mapped1", "in")  # 디퓨전 → 코너핀 매핑 출력 (§4)
     graph.connect("mapped1", "rec1", "in")  # → 레코더
     mod.graph = graph  # ModMatrix 는 그래프 파라미터를 모듈레이션

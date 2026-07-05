@@ -21,7 +21,7 @@ class ModMatrix(Processor):
     category = "audio"
     name = "ModMatrix"
     kind = "mod_matrix"
-    inputs = ("audio",)
+    inputs = ("audio", "gesture")
     params = {
         "enable": Toggle(True),
         "prompt_target": Text(default="live1"),
@@ -42,6 +42,8 @@ class ModMatrix(Processor):
         self.matrix.add_cell(ModCell("stem0.rms", "live1.prompt_strength", amount=1.0))
         self.matrix.add_cell(ModCell("stem2.centroid", "live1.controlnet.weight", amount=0.8))
         self.matrix.add_cell(ModCell("lfo0", "cam1.exposure", amount=0.5))
+        # 제스처 소스(§3.3): 프레임 제스처가 디퓨전 강도를 밀어올림
+        self.matrix.add_cell(ModCell("gesture.frame", "live1.prompt_strength", amount=0.5))
 
     # --- 그래프 콜백 (target = "nodeId.paramPath") ---
     def _node_path(self, target: str):
@@ -73,7 +75,9 @@ class ModMatrix(Processor):
         return n.is_modulatable(p) if n else False
 
     def process(self, ctx: FrameCtx, inputs: dict) -> Optional[dict]:
-        features = inputs.get("audio") if isinstance(inputs.get("audio"), dict) else {}
+        audio = inputs.get("audio") if isinstance(inputs.get("audio"), dict) else {}
+        gesture = inputs.get("gesture") if isinstance(inputs.get("gesture"), dict) else {}
+        features = {**audio, "gesture": gesture}  # 오디오 스템 + 제스처 소스 결합
         if not self.get("enable") or self.graph is None:
             self.preview = self._viz(features, {})
             return {"features": features, "applied": {}}

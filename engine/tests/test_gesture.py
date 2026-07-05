@@ -82,6 +82,23 @@ def test_gesture_recognizer_frame_and_preview():
     assert g.preview_frame().shape == (180, 320, 3)
 
 
+def test_gesture_recognizer_custom_json_rule():
+    import json
+
+    g = GestureRecognizer("g")
+    rules = [
+        {
+            "name": "peace",
+            "hand": 0,
+            "when": [{"type": "extended", "finger": "index"}, {"type": "curled", "finger": "middle"}],
+            "emit": {"type": "event", "event": "peace"},
+        }
+    ]
+    g.set("custom_rules", json.dumps(rules))
+    st = g.process(FrameCtx(), {"hands": {"hands": [_hand(0.5, 0.5)], "w": 320, "h": 180}})
+    assert st.get("event") == "peace"
+
+
 def test_region_mask_full_when_no_gesture():
     out = RegionMask("r").process(FrameCtx(), {"gesture": {"type": "none", "rect": None, "circle": None}})
     assert out.mean() > 200  # full white

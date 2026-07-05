@@ -62,15 +62,20 @@ class ModMatrix:
         if source in self.lfos:
             return self.lfos[source].value(t)
         if "." in source:
-            stem, feat = source.split(".", 1)
-            if stem.startswith("stem"):
+            head, feat = source.split(".", 1)
+            if head.startswith("stem"):
                 try:
-                    i = int(stem[4:])
+                    i = int(head[4:])
                 except ValueError:
                     return 0.0
                 stems = features.get("stems", []) if isinstance(features, dict) else []
                 if 0 <= i < len(stems):
                     return float(stems[i].get(feat, 0.0))
+            elif head == "gesture":  # 제스처 소스 (§3.3) — gesture.value/frame/point/pinch
+                g = features.get("gesture", {}) if isinstance(features, dict) else {}
+                if feat == "value":
+                    return float(g.get("value") or 0.0)
+                return 1.0 if g.get("type") == feat else 0.0
         return 0.0
 
     def apply(
