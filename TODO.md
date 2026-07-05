@@ -106,7 +106,8 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 - [x] A1 ParamSpec → UI 자동생성 (R2 척추) — node.list/graph.state에 params(스펙+값) 전송, design/ParamPanel(kind→6위젯 자동), /live 하드코딩 제거. ParamValue에 number[] 추가(multimarker). 첫 렌더 undefined 바인딩 크래시 수정(`{#if path in vals}`).
       ↳ 2026-07-05: 10노드 전부 파라미터 자동 렌더(LiveDiffusion 13개 포함, controlnet/advanced Group). Canny invert 토글→param.set→프리뷰 반전 실측. docs/verify/A1-paramspec-autogen.png.
 - [ ] A2 Scheduler(노드별 fps) + latest-wins 를 라이브 경로에 배선.
-- [ ] B §1.3 나머지 v1 노드 (Video File/Image, MaskCompose/Crossfade/Switch/EnvelopeFollower/LFO, StylePreset, Blend/ColorGrade/FeedbackLoop).
+- [x] B §1.3 v1 노드 8종 추가 — Image·Blend·Crossfade·ColorGrade·Switch·MaskCompose·FeedbackLoop·StylePreset (registry 21종, /graph 팔레트 전체). A1 자동 UI 로 파라미터 무료.
+      ↳ 2026-07-05: pytest+12(노드 B). 팔레트로 StylePreset 추가→/live 자동 파라미터(enum+slider) 실측. (Video File/EnvelopeFollower/standalone LFO 는 후속.)
 - [ ] C 제스처 JSON 규칙 노드 배선 + 이벤트 버스(씬/프리셋 트리거) + ModMatrix 소스 확장(gesture) + 매트릭스 에디터 UI.
 - [ ] D 큐/씬 시스템 + crossfade + MIDI/OSC In.
 

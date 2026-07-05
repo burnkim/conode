@@ -34,34 +34,20 @@ from .messages import (
 
 def node_registry() -> dict:
     """node_type → 클래스. 무거운 임포트(cv2/mediapipe)를 지연."""
-    from ..nodes.audio_in import AudioIn
-    from ..nodes.camera import Camera
-    from ..nodes.canny import Canny
-    from ..nodes.depth import Depth
-    from ..nodes.gesture_recognizer import GestureRecognizer
-    from ..nodes.hand_tracker import HandTracker
-    from ..nodes.live_diffusion import LiveDiffusion
-    from ..nodes.mapped_output import MappedOutput
-    from ..nodes.mod_matrix import ModMatrix
-    from ..nodes.pose import Pose
-    from ..nodes.recorder import Recorder
-    from ..nodes.region_mask import RegionMask
-    from ..nodes.segmentation import Segmentation
+    from ..nodes import (
+        AudioIn, Blend, Camera, Canny, ColorGrade, Crossfade, Depth, FeedbackLoop,
+        GestureRecognizer, HandTracker, Image, LiveDiffusion, MappedOutput, MaskCompose,
+        ModMatrix, Pose, Recorder, RegionMask, Segmentation, StylePreset, Switch,
+    )
 
     return {
-        "camera": Camera,
-        "canny": Canny,
-        "depth": Depth,
-        "pose": Pose,
-        "segmentation": Segmentation,
-        "live_diffusion": LiveDiffusion,
-        "hand_tracker": HandTracker,
-        "gesture_recognizer": GestureRecognizer,
-        "region_mask": RegionMask,
-        "audio_in": AudioIn,
-        "mod_matrix": ModMatrix,
-        "mapped_output": MappedOutput,
-        "recorder": Recorder,
+        "camera": Camera, "image": Image, "canny": Canny, "pose": Pose,
+        "depth": Depth, "segmentation": Segmentation, "hand_tracker": HandTracker,
+        "gesture_recognizer": GestureRecognizer, "region_mask": RegionMask,
+        "live_diffusion": LiveDiffusion, "audio_in": AudioIn, "mod_matrix": ModMatrix,
+        "blend": Blend, "crossfade": Crossfade, "color_grade": ColorGrade,
+        "switch": Switch, "mask_compose": MaskCompose, "feedback": FeedbackLoop,
+        "style_preset": StylePreset, "mapped_output": MappedOutput, "recorder": Recorder,
     }
 
 

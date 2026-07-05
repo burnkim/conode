@@ -8,7 +8,12 @@
 
 	const NODE_W = 184;
 	const PORT_Y = 30; // 노드 상단에서 포트 중심까지(px)
-	const PALETTE = ['camera', 'canny', 'pose', 'depth', 'segmentation'];
+	const PALETTE = [
+		'camera', 'image', 'canny', 'pose', 'depth', 'segmentation', 'hand_tracker',
+		'gesture_recognizer', 'region_mask', 'live_diffusion', 'audio_in', 'mod_matrix',
+		'blend', 'crossfade', 'color_grade', 'switch', 'mask_compose', 'feedback',
+		'style_preset', 'mapped_output', 'recorder'
+	];
 
 	const client = new ConodeClient();
 	let canvasEl = $state<HTMLDivElement>();
