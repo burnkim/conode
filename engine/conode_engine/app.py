@@ -20,7 +20,9 @@ from .nodes.canny import Canny
 from .nodes.gesture_recognizer import GestureRecognizer
 from .nodes.hand_tracker import HandTracker
 from .nodes.live_diffusion import LiveDiffusion
+from .nodes.mapped_output import MappedOutput
 from .nodes.mod_matrix import ModMatrix
+from .nodes.recorder import Recorder
 from .nodes.region_mask import RegionMask
 from .protocol.messages import FramePreview
 from .protocol.server import EngineServer
@@ -36,8 +38,10 @@ def build_graph() -> tuple[Graph, Camera]:
     live = LiveDiffusion("live1", index=6)
     audio = AudioIn("audio1", index=7)
     mod = ModMatrix("mod1", index=8)
+    mapped = MappedOutput("mapped1", index=9)
+    rec = Recorder("rec1", index=10)
     graph = Graph()
-    for n in (cam, canny, hands, gesture, region, live, audio, mod):
+    for n in (cam, canny, hands, gesture, region, live, audio, mod, mapped, rec):
         graph.add(n)
     graph.connect("cam1", "canny1", "in")
     graph.connect("cam1", "hands1", "in")
@@ -47,6 +51,8 @@ def build_graph() -> tuple[Graph, Camera]:
     graph.connect("canny1", "live1", "control")  # ControlNet
     graph.connect("region1", "live1", "mask")  # 제스처 영역만 디퓨전
     graph.connect("audio1", "mod1", "audio")  # 오디오 특성 → ModMatrix
+    graph.connect("live1", "mapped1", "in")  # 디퓨전 → 코너핀 매핑 출력 (§4)
+    graph.connect("mapped1", "rec1", "in")  # → 레코더
     mod.graph = graph  # ModMatrix 는 그래프 파라미터를 모듈레이션
     return graph, cam
 

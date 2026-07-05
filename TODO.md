@@ -78,6 +78,16 @@ T21~T24 전부 완료·검증(Mac). 시그니처 "프레임 제스처=영역 디
 ## M4 완료 (2026-07-05)
 T25~T29 전부 완료·검증(Mac). 12스템 ModMatrix 라이브 모듈레이션 동작. pytest 86.
 
+# TODO — M5 출력 (PLAN §4)
+- [x] T30 MappedOutput 노드 — 코너핀 4점 homography warp(cv2) + 엣지 블렌드. [Mac 검증]
+- [x] T31 Recorder 노드 — 프레임 → 비디오 파일(cv2.VideoWriter, recordings/ gitignore). [Mac 검증]
+- [x] T32 매핑 에디터 UI — /output 코너 드래그 → param.set(corners.*), 라이브 워프. [Mac 검증]
+- [x] T33 NDI/Spout/Syphon Out + 멀티디스플레이 — docs/output-bridges.md(네이티브, 배포 검증). [문서]
+      ↳ 2026-07-05 M5 완료: nodes/{mapped_output,recorder}, 그래프 live→mapped→rec. /output 코너핀 에디터(드래그 워프 실측). NDI/Spout/Syphon/멀티디스플레이는 네이티브라 문서화(배포 검증). pytest 90. docs/verify/T30-33-mapped-output.png.
+
+## M5 상태 (2026-07-05)
+포터블 코어(MappedOutput 코너핀·Recorder·에디터 UI) Mac 검증 완료. 네이티브 출력(NDI/Spout/Syphon·멀티디스플레이)은 문서화, 배포 검증 대기. pytest 90.
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

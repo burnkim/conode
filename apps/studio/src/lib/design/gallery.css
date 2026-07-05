@@ -211,3 +211,53 @@
 	font-size: 11px;
 	opacity: 0.5;
 }
+
+/* --- 매핑 에디터 (T32) --- */
+.dg-map {
+	position: relative;
+	aspect-ratio: 16 / 9;
+	max-width: calc(var(--space-unit) * 180);
+	background: var(--bg-canvas);
+	border: var(--border-w) solid var(--field-border);
+	border-radius: var(--radius-card);
+	overflow: hidden;
+	touch-action: none;
+	user-select: none;
+}
+.dg-map img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+}
+.dg-map-svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 1;
+}
+.dg-map-quad {
+	fill: none;
+	stroke: var(--cat-output);
+	stroke-width: 1.5;
+	stroke-dasharray: 5 4;
+	opacity: 0.8;
+	vector-effect: non-scaling-stroke;
+}
+.dg-map-handle {
+	position: absolute;
+	width: calc(var(--space-unit) * 4);
+	height: calc(var(--space-unit) * 4);
+	border-radius: 50%;
+	background: var(--cat-output);
+	border: 2px solid var(--bg-canvas);
+	transform: translate(-50%, -50%);
+	cursor: grab;
+	z-index: 2;
+}
+.dg-map-handle:active {
+	cursor: grabbing;
+}

@@ -6,8 +6,10 @@ from .depth import Depth
 from .gesture_recognizer import GestureRecognizer
 from .hand_tracker import HandTracker
 from .live_diffusion import LiveDiffusion
+from .mapped_output import MappedOutput
 from .mod_matrix import ModMatrix
 from .pose import Pose
+from .recorder import Recorder
 from .region_mask import RegionMask
 from .segmentation import Segmentation
 
@@ -19,8 +21,10 @@ __all__ = [
     "GestureRecognizer",
     "HandTracker",
     "LiveDiffusion",
+    "MappedOutput",
     "ModMatrix",
     "Pose",
+    "Recorder",
     "RegionMask",
     "Segmentation",
 ]

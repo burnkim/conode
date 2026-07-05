@@ -43,6 +43,7 @@ venv/
 
 # --- Build / models (배포 라이선스: 모델 가중치 미포함) ---
 models/
+recordings/
 *.onnx
 *.engine
 *.trt

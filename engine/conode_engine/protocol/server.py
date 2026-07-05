@@ -41,8 +41,10 @@ def node_registry() -> dict:
     from ..nodes.gesture_recognizer import GestureRecognizer
     from ..nodes.hand_tracker import HandTracker
     from ..nodes.live_diffusion import LiveDiffusion
+    from ..nodes.mapped_output import MappedOutput
     from ..nodes.mod_matrix import ModMatrix
     from ..nodes.pose import Pose
+    from ..nodes.recorder import Recorder
     from ..nodes.region_mask import RegionMask
     from ..nodes.segmentation import Segmentation
 
@@ -58,6 +60,8 @@ def node_registry() -> dict:
         "region_mask": RegionMask,
         "audio_in": AudioIn,
         "mod_matrix": ModMatrix,
+        "mapped_output": MappedOutput,
+        "recorder": Recorder,
     }
 
 
