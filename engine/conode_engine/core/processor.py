@@ -31,6 +31,7 @@ class Processor:
         self.store = ParamStore(type(self).params)
         self.tick_count = 0
         self.last_ms = 0.0
+        self.last_error: Optional[str] = None
         self.output: Any = None  # 최신 출력 (다운스트림이 읽음)
 
     # --- 파라미터 ---
@@ -43,11 +44,24 @@ class Processor:
     def modulation_targets(self) -> list[str]:
         return self.store.modulation_targets()
 
+    # --- 수명주기 (무거운 준비는 여기서, tick 밖에서 — R4) ---
+    def start(self) -> None:
+        """그래프 시작 전 1회. 모델 로드/캡처 스레드 등 blocking 준비."""
+
+    def stop(self) -> None:
+        """그래프 종료 시 1회. 리소스 해제."""
+
     # --- 실행 ---
     def tick(self, ctx: FrameCtx, inputs: Optional[dict[str, Any]] = None) -> Any:
+        # 노드 하나가 죽어도 그래프 전체를 멈추지 않는다 (PLAN §1.1 크래시 격리).
         t0 = time.perf_counter()
         self.tick_count += 1
-        self.output = self.process(ctx, inputs or {})
+        try:
+            self.output = self.process(ctx, inputs or {})
+            self.last_error = None
+        except Exception as e:  # noqa: BLE001 — 노드 격리
+            self.output = None
+            self.last_error = repr(e)
         self.last_ms = (time.perf_counter() - t0) * 1000.0
         return self.output
 

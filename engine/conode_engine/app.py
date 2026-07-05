@@ -16,23 +16,30 @@ from .core.preview import encode_jpeg, frame_size
 from .core.processor import FrameCtx
 from .nodes.camera import Camera
 from .nodes.canny import Canny
+from .nodes.depth import Depth
+from .nodes.pose import Pose
+from .nodes.segmentation import Segmentation
 from .protocol.messages import FramePreview
 from .protocol.server import EngineServer
 
 
 def build_graph() -> tuple[Graph, Camera]:
     cam = Camera("cam1", index=1)
-    canny = Canny("canny1", index=2)
     graph = Graph()
     graph.add(cam)
-    graph.add(canny)
-    graph.connect("cam1", "canny1", "in")
+    for i, node in enumerate(
+        [Canny("canny1"), Pose("pose1"), Depth("depth1"), Segmentation("seg1")], start=2
+    ):
+        node.index = i
+        graph.add(node)
+        graph.connect("cam1", node.id, "in")
     return graph, cam
 
 
 async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.0) -> None:
     graph, cam = build_graph()
-    cam.start()
+    for node in graph.nodes.values():
+        node.start()  # 캡처 스레드/모델 로드 등 무거운 준비 (R4: tick 밖)
     server = EngineServer(nodes=list(graph.nodes.values()), host=host, port=port)
     server.graph = graph
     period = 1.0 / target_fps
@@ -79,11 +86,13 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
             await asyncio.sleep(max(0.0, period - elapsed))
 
     async with websockets.serve(server.handler, host, port):
-        print(f"conode-engine  ws://{host}:{port}  (graph: cam1→canny1, probing camera…)", flush=True)
+        nodes = "+".join(n.id for n in graph.nodes.values())
+        print(f"conode-engine  ws://{host}:{port}  (graph: cam1→[{nodes}], probing camera…)", flush=True)
         try:
             await broadcaster()
         finally:
-            cam.stop()
+            for node in graph.nodes.values():
+                node.stop()
 
 
 def main() -> None:

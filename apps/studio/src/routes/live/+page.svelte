@@ -41,7 +41,7 @@
 <div class="dg-page">
 	<header>
 		<h1 class="dg-h1">conode · live</h1>
-		<p class="dg-sub mono">M1 · T8 — Camera → Canny 그래프 (engine → WS → NodeCard 프리뷰)</p>
+		<p class="dg-sub mono">M1 — Vision pipeline · Camera → Canny · Pose · Depth · Segmentation</p>
 		<nav class="dg-nav mono">
 			<a href="/design">design</a>
 			<a href="/nodes">nodes</a>
@@ -58,7 +58,7 @@
 	</header>
 
 	<section class="dg-section">
-		<h2 class="dg-section-title">Graph — Camera → Canny</h2>
+		<h2 class="dg-section-title">Graph — Camera → 4 vision nodes</h2>
 		<div class="dg-nodes">
 			{#each client.nodes as node (node.id)}
 				{@const f = client.frames[node.id]}

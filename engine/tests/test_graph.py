@@ -76,6 +76,23 @@ def test_remove_node_cleans_edges():
     assert g.edges["c"] == {}
 
 
+class _Boom(Processor):
+    inputs = ("in",)
+
+    def process(self, ctx, inputs):
+        raise RuntimeError("boom")
+
+
+def test_tick_isolates_node_errors():
+    g = Graph()
+    g.add(_Src("s", _edge_image()))
+    g.add(_Boom("b"))
+    g.connect("s", "b", "in")
+    g.evaluate(FrameCtx())  # 예외가 그래프를 멈추면 안 됨
+    assert g.nodes["b"].output is None
+    assert "boom" in (g.nodes["b"].last_error or "")
+
+
 def test_describe_has_nodes_and_edges():
     g = Graph()
     g.add(_Src("s", _edge_image()))

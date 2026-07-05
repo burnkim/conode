@@ -21,9 +21,13 @@ T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pyte
 - [x] T8 Canny 노드 (OpenCV) — Camera→Canny E2E, /live 다중 노드 프리뷰. 완료조건: Canny 엣지 프리뷰가 NodeCard에 표시.
       ↳ 2026-07-05 완료: nodes/canny.py(low/high/invert). app.py 그래프 cam1→canny1, 노드별 preview broadcast. /live를 client.nodes 루프 다중 NodeCard로. E2E: 실카메라 + Canny 엣지 프리뷰 2카드, 28fps 초록 배지, low/high param.set 배선. docs/verify/T8-camera-canny.png. (T7+T8 한 슬라이스로 함께 검증·커밋)
 - [ ] T9 프로토콜 확장 — graph 메시지(graph.get/node.add/node.connect/node.remove) 스키마 + zod/pydantic 재생성 + 계약 테스트.
-- [ ] T10 Pose 노드 (MediaPipe, 폴백) — 스켈레톤 오버레이 프리뷰.
-- [ ] T11 Depth 노드 (경량 모델/근사, 폴백) — 뎁스맵 프리뷰.
-- [ ] T12 Segmentation 노드 (MediaPipe SelfieSeg/YOLOv8-seg, 폴백) — 마스크 프리뷰.
+- [x] T10 Pose 노드 (MediaPipe, 폴백) — 스켈레톤 오버레이 프리뷰.
+      ↳ 2026-07-05 완료: nodes/pose.py MediaPipe PoseLandmarker(Tasks API, start()에서 로드=R4), 스켈레톤 오버레이. 모델 실패 시 폴백. E2E 10.5ms/frame.
+- [x] T11 Depth 노드 (근사, 폴백) — 뎁스맵 프리뷰.
+      ↳ 2026-07-05 완료: nodes/depth.py 밝기/블러 근사 + INFERNO 컬러맵(모델 미사용, 실모델은 M2에서 process 교체). 0.4ms/frame.
+- [x] T12 Segmentation 노드 (MediaPipe SelfieSeg, 폴백) — 마스크 프리뷰.
+      ↳ 2026-07-05 완료: nodes/segmentation.py MediaPipe ImageSegmenter(confidence mask), cutout/mask/blur_bg 합성. 폴백=중앙근사. 4.7ms/frame.
+      ↳ 공통: core/models.py 다운로더(models/ 캐시, PLAN §7), Processor.tick 노드 크래시 격리. mediapipe 의존성(Apache2.0). pytest 44. /live 5노드 28fps. docs/verify/T10-12-vision-pipeline.png.
 - [ ] T13 쿼드뷰 UI — 4분할 노드 프리뷰 레이아웃.
 - [ ] T14 노드 그래프 편집 UI — 캔버스 노드 배치/연결선/삭제/저장(직렬화 왕복).
 

@@ -13,12 +13,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-# 런타임(카메라·WS·프레임 인코딩)은 T5/T6에서 사용. 무거운 휠(opencv)이라 분리.
+# 런타임(카메라·WS·프레임 인코딩·비전). 무거운 휠이라 분리.
 runtime = [
   "websockets>=12",
   "numpy>=1.26",
   "opencv-python>=4.9",
   "pillow>=10",
+  "mediapipe>=0.10.14",  # T10/T12 Pose·Segmentation (Tasks API, Apache-2.0)
 ]
 
 [tool.hatch.build.targets.wheel]
