@@ -1,0 +1,49 @@
+/*
+ * base reset + 다크 캔버스. R1: design/ 내부에서만 스타일 선언.
+ * 폰트 파일은 아직 번들 미포함 → 시스템 폴백(sans-serif/monospace)으로 표시.
+ */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	background: var(--bg-canvas);
+	color: var(--text-hi);
+	font-family: var(--font-ui);
+	font-size: 14px;
+	line-height: 1.4;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	overflow: hidden; /* 캔버스 앱: 문서 스크롤 금지 */
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+	font-weight: 600;
+}
+
+p {
+	font-weight: 400;
+}
+
+button {
+	font-family: inherit;
+}
+
+/* 값·경로·성능배지 등 mono 유틸 */
+.mono {
+	font-family: var(--font-mono);
+	font-feature-settings: 'tnum' 1;
+}

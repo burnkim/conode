@@ -1,0 +1,83 @@
+/*
+ * /design 갤러리 레이아웃. R1: 라우트(+page.svelte)는 스타일을 선언하지 않고
+ * 여기(design/)의 클래스만 사용한다. 색/간격 전부 토큰.
+ */
+.dg-page {
+	height: 100vh;
+	overflow: auto;
+	padding: calc(var(--space-unit) * 8);
+	max-width: calc(var(--space-unit) * 260);
+	margin: 0 auto;
+}
+
+.dg-h1 {
+	font-size: 22px;
+	color: var(--text-hi);
+}
+.dg-sub {
+	margin-top: calc(var(--space-unit) * 1);
+	color: var(--text-lo);
+	font-size: var(--fs-value);
+}
+
+.dg-section {
+	margin-top: calc(var(--space-unit) * 10);
+}
+.dg-section-title {
+	font-size: 14px;
+	color: var(--text-lo);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	margin-bottom: calc(var(--space-unit) * 4);
+	padding-bottom: calc(var(--space-unit) * 2);
+	border-bottom: var(--border-w) solid var(--field-border);
+}
+
+/* --- color swatches --- */
+.dg-swatches {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(calc(var(--space-unit) * 32), 1fr));
+	gap: calc(var(--space-unit) * 3);
+}
+.dg-swatch {
+	background: var(--bg-card);
+	border-radius: var(--radius-card);
+	padding: calc(var(--space-unit) * 2);
+}
+.dg-swatch-chip {
+	height: calc(var(--space-unit) * 12);
+	border-radius: var(--radius-field);
+	border: var(--border-w) solid var(--field-border);
+}
+.dg-swatch-name {
+	margin-top: calc(var(--space-unit) * 2);
+	color: var(--text-hi);
+	font-size: var(--fs-value);
+}
+.dg-swatch-tok {
+	color: var(--text-lo);
+	font-size: 11px;
+}
+
+/* --- widget cards --- */
+.dg-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(calc(var(--space-unit) * 78), 1fr));
+	gap: calc(var(--space-unit) * 5);
+	align-items: start;
+}
+.dg-widget {
+	background: var(--bg-card);
+	border-radius: var(--radius-card);
+	padding: calc(var(--space-unit) * 4);
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--space-unit) * 3);
+}
+.dg-widget-name {
+	color: var(--text-lo);
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	margin-bottom: calc(var(--space-unit) * 1);
+}

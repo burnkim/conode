@@ -1,0 +1,54 @@
+/*
+ * conode design tokens — PLAN §5.2 (초안). 다크 온리 (v1).
+ *
+ * R1: 스타일/색/px 는 이 디렉터리(src/lib/design/) 안에서만 선언한다.
+ * R6: 파라미터 위젯은 6종 고정. 토큰 확장은 가능하나 디자인 리뷰 대상(§5.1).
+ * 이 파일 밖(라우트·노드·컴포넌트)에서는 오직 이 토큰만 참조 (하드코딩 금지).
+ */
+:root {
+	/* --- color · surfaces --- */
+	--bg-canvas: #0b0e14;
+	--bg-card: #1c2230;
+	--bg-field: #141926;
+
+	/* --- color · text --- */
+	--text-hi: #f2f4f8;
+	--text-lo: #8a93a6;
+
+	/* --- color · category (노드 헤더색; 좌→우 다크 그라디언트로 스며듦) --- */
+	--cat-input: #f26d6d;
+	--cat-vision: #f2d5b8;
+	--cat-depth: #9cc7f2;
+	--cat-generate: #7df2a8;
+	--cat-audio: #b89cf2;
+	--cat-output: #f2b84d;
+
+	/* --- color · state (성능배지/검증) --- */
+	--state-warn: #f2b84d;
+	--state-error: #f26d6d;
+	--state-ok: #7df2a8;
+
+	/* --- 인터랙션 파생 토큰 (T2 추가 · 디자인 리뷰 대상) --- */
+	--field-fill: #2a3346; /* fill-bar 슬라이더 채움 영역 */
+	--field-border: #2a3346; /* 필드 경계 */
+	--field-hover: #202838; /* 필드 hover */
+	--focus-ring: var(--cat-depth); /* 포커스 링 */
+	--knob: #f2f4f8; /* 토글/마커 손잡이 */
+
+	/* --- geometry --- */
+	--radius-card: 12px;
+	--radius-field: 8px;
+	--space-unit: 4px; /* 모든 간격은 4의 배수 */
+	--param-row-h: 36px; /* 파라미터 행 높이 고정 */
+	--border-w: 1px;
+	--focus-w: 2px;
+
+	/* --- type --- */
+	--font-ui: 'Inter', 'Pretendard', system-ui, -apple-system, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', monospace; /* 값·경로·성능배지 */
+	--fs-label: 13px;
+	--fs-value: 12px;
+
+	/* --- motion (§5.3: 등장/접힘 150ms ease-out) --- */
+	--motion-fast: 150ms ease-out;
+}
