@@ -1,0 +1,48 @@
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Node / pnpm ---
+node_modules/
+.pnpm-store/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# --- SvelteKit / Vite ---
+.svelte-kit/
+apps/studio/build/
+apps/studio/.vercel/
+vite.config.*.timestamp-*
+
+# --- Tauri / Rust ---
+apps/studio/src-tauri/target/
+apps/studio/src-tauri/gen/
+target/
+**/*.rs.bk
+
+# --- Python (engine) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Editors ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# --- Build / models (배포 라이선스: 모델 가중치 미포함) ---
+models/
+*.onnx
+*.engine
+*.trt
