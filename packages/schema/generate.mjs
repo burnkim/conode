@@ -33,7 +33,8 @@ const ORDER = [
 	'SceneSave',
 	'SceneRecall',
 	'SceneGet',
-	'SceneList'
+	'SceneList',
+	'CueBind'
 ];
 const MESSAGES = ORDER.filter((n) => isMessage(defs[n]));
 

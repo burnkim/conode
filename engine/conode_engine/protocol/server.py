@@ -29,6 +29,7 @@ from .messages import (
     NodeList,
     NodeRemove,
     ParamSet,
+    CueBind,
     SceneGet,
     SceneList,
     SceneRecall,
@@ -153,6 +154,8 @@ class EngineServer:
             self.scenes.recall(msg.name, self.graph, fade=float(msg.fade or 0.0), now=time.monotonic())
         elif isinstance(msg, SceneGet):
             await self._send(ws, SceneList(names=self.scenes.names()))
+        elif isinstance(msg, CueBind):
+            self.scenes.bind(msg.event, msg.scene, float(msg.fade or 0.0))
 
     async def _add_node(self, msg: NodeAdd) -> None:
         cls = node_registry().get(msg.node_type)

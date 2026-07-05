@@ -113,6 +113,10 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 - [x] D 큐/씬 시스템 + crossfade. (MIDI/OSC In 은 후속: 디바이스/deps 의존)
       ↳ 2026-07-05: core/scenes.SceneStore(capture/save/recall+fade 크로스페이드/update). 프로토콜 scene.save/recall/get/list, 서버+브로드캐스터 update, 클라이언트, /scenes UI. Crossfade 노드(B). pytest+8. /scenes E2E: intro/drop 저장→recall 크로스페이드 실측.
 
+# TODO — 후속작업
+- [x] 큐 바인딩 (제스처 이벤트 → 씬 recall) — §2 "이벤트는 씬 전환에 바인딩" 완성.
+      ↳ 2026-07-05: SceneStore.bind/trigger, 프로토콜 cue.bind, 서버 핸들 + 브로드캐스터가 노드 output.event 엣지검출→scenes.trigger(씬 크로스페이드 recall). /scenes 바인딩 UI(palm_push/point_hold→씬). pytest+1. E2E: 바인딩 저장·엔진 안정 확인.
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

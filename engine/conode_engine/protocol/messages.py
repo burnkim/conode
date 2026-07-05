@@ -126,7 +126,15 @@ class SceneList(BaseModel):
     v: Literal[0] = 0
     names: list[str]
 
-Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList], Field(discriminator="type")]
+class CueBind(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["cue.bind"] = "cue.bind"
+    v: Literal[0] = 0
+    event: str
+    scene: str
+    fade: Optional[float] = None
+
+Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind], Field(discriminator="type")]
 _ADAPTER: TypeAdapter[Message] = TypeAdapter(Message)
 
 

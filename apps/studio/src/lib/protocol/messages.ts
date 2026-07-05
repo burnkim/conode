@@ -172,7 +172,18 @@ export const SceneList = z
 	.strict();
 export type SceneList = z.infer<typeof SceneList>;
 
-export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList]);
+export const CueBind = z
+	.object({
+	"type": z.literal("cue.bind"),
+	"v": z.literal(0),
+	"event": z.string(),
+	"scene": z.string(),
+	"fade": z.number().optional()
+	})
+	.strict();
+export type CueBind = z.infer<typeof CueBind>;
+
+export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind]);
 export type Message = z.infer<typeof Message>;
 
 export function parseMessage(u: unknown): Message {

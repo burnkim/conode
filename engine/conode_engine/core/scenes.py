@@ -12,6 +12,7 @@ class SceneStore:
     def __init__(self):
         self.scenes: dict[str, dict[str, object]] = {}
         self._fade: Optional[dict] = None  # {start, end, t0, dur}
+        self.bindings: dict[str, tuple[str, float]] = {}  # event → (scene, fade) — 큐(§2)
 
     def capture(self, graph) -> dict[str, object]:
         snap: dict[str, object] = {}
@@ -39,6 +40,17 @@ class SceneStore:
         else:
             self._fade = {"start": self.capture(graph), "end": dict(target), "t0": now, "dur": fade}
         return True
+
+    # --- 큐 바인딩 (§2: 이벤트 → 씬 전환) ---
+    def bind(self, event: str, scene: str, fade: float = 0.0) -> None:
+        self.bindings[event] = (scene, fade)
+
+    def trigger(self, event: str, graph, now: float = 0.0) -> bool:
+        b = self.bindings.get(event)
+        if b is None:
+            return False
+        scene, fade = b
+        return self.recall(scene, graph, fade=fade, now=now)
 
     def update(self, graph, now: float) -> None:
         """크로스페이드 진행 — 매 tick 호출."""

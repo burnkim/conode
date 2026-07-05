@@ -71,11 +71,18 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
         last = time.monotonic()
         seq = 0
         logged_first = False
+        last_events: dict = {}
         while True:
             t0 = time.monotonic()
             if server.clients:
                 server.scenes.update(graph, t0)  # D: 씬 크로스페이드 진행
                 graph.evaluate(FrameCtx(seq=seq, t=t0))
+                # 큐: 노드 이벤트(제스처 등) 엣지검출 → 바인딩된 씬 recall (§2)
+                for n in list(graph.nodes.values()):
+                    ev = n.output.get("event") if isinstance(n.output, dict) else None
+                    if ev and ev != last_events.get(n.id):
+                        server.scenes.trigger(ev, graph, t0)
+                    last_events[n.id] = ev
                 now = time.monotonic()
                 dt = now - last
                 last = now

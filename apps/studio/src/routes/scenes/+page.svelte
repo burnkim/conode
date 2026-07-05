@@ -11,6 +11,7 @@
 	onMount(() => client.connect());
 	onDestroy(() => client.disconnect());
 
+	const EVENTS = ['palm_push', 'point_hold'];
 	let name = $state('');
 	let fade = $state(1.0);
 
@@ -57,6 +58,20 @@
 			{/each}
 			{#if client.scenes.length === 0}
 				<span class="dg-sub mono">저장된 씬 없음 — /live 에서 파라미터 조정 후 여기서 save.</span>
+			{/if}
+		</div>
+	</section>
+
+	<section class="dg-section">
+		<h2 class="dg-section-title">큐 바인딩 — 제스처 이벤트 → 씬 (§2)</h2>
+		<div class="gx-actions">
+			{#each EVENTS as ev (ev)}
+				{#each client.scenes as s (s)}
+					<button class="gx-btn" onclick={() => client.bindCue(ev, s, fade)}>{ev} → {s}</button>
+				{/each}
+			{/each}
+			{#if client.scenes.length === 0}
+				<span class="dg-sub mono">씬 저장 후, 제스처 이벤트(palm_push/point_hold)를 씬에 바인딩.</span>
 			{/if}
 		</div>
 	</section>

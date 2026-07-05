@@ -209,6 +209,19 @@
         "names": { "type": "array", "items": { "type": "string" } }
       }
     },
+    "CueBind": {
+      "type": "object",
+      "description": "이벤트→씬 큐 바인딩 (UI→engine). 제스처/OSC 이벤트가 씬을 recall.",
+      "additionalProperties": false,
+      "required": ["type", "v", "event", "scene"],
+      "properties": {
+        "type": { "const": "cue.bind" },
+        "v": { "const": 0 },
+        "event": { "type": "string" },
+        "scene": { "type": "string" },
+        "fade": { "type": "number" }
+      }
+    },
     "Message": {
       "description": "모든 프로토콜 메시지의 판별 유니온 (discriminator: type).",
       "oneOf": [
@@ -225,7 +238,8 @@
         { "$ref": "#/$defs/SceneSave" },
         { "$ref": "#/$defs/SceneRecall" },
         { "$ref": "#/$defs/SceneGet" },
-        { "$ref": "#/$defs/SceneList" }
+        { "$ref": "#/$defs/SceneList" },
+        { "$ref": "#/$defs/CueBind" }
       ]
     }
   },

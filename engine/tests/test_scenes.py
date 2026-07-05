@@ -43,6 +43,19 @@ def test_scene_recall_unknown():
     assert SceneStore().recall("nope", g) is False
 
 
+def test_cue_bind_and_trigger():
+    g = Graph()
+    g.add(_N("a"))
+    s = SceneStore()
+    g.nodes["a"].set("p", 0.5)
+    s.save("s1", g)
+    g.nodes["a"].set("p", 2.0)
+    s.bind("palm_push", "s1", fade=0.0)  # 이벤트 → 씬
+    assert s.trigger("palm_push", g) is True
+    assert g.nodes["a"].get("p") == 0.5  # 씬이 recall 됨
+    assert s.trigger("no_binding", g) is False
+
+
 def test_scene_names():
     g = Graph()
     g.add(_N("a"))

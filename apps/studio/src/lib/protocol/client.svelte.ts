@@ -103,6 +103,9 @@ export class ConodeClient {
 	recallScene(name: string, fade = 0): void {
 		this.#send({ type: 'scene.recall', v: 0, name, fade });
 	}
+	bindCue(event: string, scene: string, fade = 0): void {
+		this.#send({ type: 'cue.bind', v: 0, event, scene, fade });
+	}
 
 	#send(obj: unknown): void {
 		if (this.#ws?.readyState === WebSocket.OPEN) {
