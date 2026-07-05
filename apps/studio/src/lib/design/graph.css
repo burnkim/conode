@@ -1,0 +1,173 @@
+/*
+ * 노드 그래프 편집기 스타일 (T14). R1: design/ 내부에서만. 색/간격은 토큰.
+ * 라우트(routes/graph)는 이 클래스만 사용하고 <style> 를 두지 않는다.
+ */
+.gx-page {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	padding: calc(var(--space-unit) * 5);
+	gap: calc(var(--space-unit) * 3);
+	box-sizing: border-box;
+}
+.gx-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+.gx-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: calc(var(--space-unit) * 3);
+	flex-wrap: wrap;
+}
+.gx-palette,
+.gx-actions {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--space-unit) * 2);
+	flex-wrap: wrap;
+}
+.gx-btn {
+	background: var(--bg-field);
+	color: var(--text-hi);
+	border: var(--border-w) solid var(--field-border);
+	border-radius: var(--radius-field);
+	font-family: var(--font-mono);
+	font-size: var(--fs-value);
+	padding: calc(var(--space-unit) * 1.5) calc(var(--space-unit) * 2.5);
+	cursor: pointer;
+	transition: background var(--motion-fast);
+}
+.gx-btn:hover {
+	background: var(--field-hover);
+}
+.gx-btn:focus-visible {
+	outline: var(--focus-w) solid var(--focus-ring);
+	outline-offset: var(--border-w);
+}
+.gx-danger {
+	color: var(--state-error);
+	border-color: var(--state-error);
+}
+.gx-status {
+	color: var(--text-lo);
+	font-size: var(--fs-value);
+}
+
+/* --- 캔버스 --- */
+.gx-canvas {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	background:
+		radial-gradient(circle at 1px 1px, var(--bg-card) 1px, transparent 0) 0 0 / 24px 24px,
+		var(--bg-canvas);
+	border: var(--border-w) solid var(--field-border);
+	border-radius: var(--radius-card);
+	overflow: hidden;
+	touch-action: none;
+	user-select: none;
+}
+
+.gx-edges {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 1;
+}
+.gx-edge {
+	fill: none;
+	stroke-width: 2;
+	stroke-dasharray: 5 5;
+	opacity: 0.85;
+}
+.gx-edge-live {
+	opacity: 0.6;
+}
+.gx-edge-hit {
+	fill: none;
+	stroke: transparent;
+	stroke-width: 14;
+	pointer-events: stroke;
+	cursor: pointer;
+}
+
+/* --- 노드 박스 --- */
+.gx-node {
+	position: absolute;
+	z-index: 2;
+	background: var(--bg-card);
+	border: var(--border-w) solid var(--field-border);
+	border-radius: var(--radius-field);
+	overflow: visible;
+	box-shadow: 0 4px 16px rgb(0 0 0 / 0.35);
+}
+.gx-node.sel {
+	border-color: var(--focus-ring);
+}
+.gx-node-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: calc(var(--space-unit) * 8);
+	padding: 0 calc(var(--space-unit) * 2.5);
+	border-radius: var(--radius-field) var(--radius-field) 0 0;
+	cursor: grab;
+	background: linear-gradient(
+		100deg,
+		color-mix(in srgb, var(--cat) 60%, var(--bg-card)) 0%,
+		var(--bg-card) 75%
+	);
+}
+.gx-node-head:active {
+	cursor: grabbing;
+}
+.gx-node-name {
+	color: var(--text-hi);
+	font-size: var(--fs-label);
+	font-weight: 600;
+}
+.gx-x {
+	border: none;
+	background: transparent;
+	color: var(--text-lo);
+	cursor: pointer;
+	font-size: 12px;
+	line-height: 1;
+	padding: calc(var(--space-unit) * 0.5);
+}
+.gx-x:hover {
+	color: var(--state-error);
+}
+.gx-node-body {
+	color: var(--text-lo);
+	font-size: 11px;
+	padding: calc(var(--space-unit) * 2) calc(var(--space-unit) * 2.5) calc(var(--space-unit) * 2.5);
+}
+
+/* --- 포트 --- */
+.gx-port {
+	position: absolute;
+	top: calc(var(--port-y) - var(--space-unit) * 1.5);
+	width: calc(var(--space-unit) * 3);
+	height: calc(var(--space-unit) * 3);
+	border-radius: 50%;
+	background: var(--bg-field);
+	border: 2px solid var(--cat);
+}
+.gx-in {
+	left: calc(var(--space-unit) * -1.5);
+}
+.gx-out {
+	right: calc(var(--space-unit) * -1.5);
+	cursor: crosshair;
+	background: var(--cat);
+}
+.gx-out:hover {
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--cat) 40%, transparent);
+}

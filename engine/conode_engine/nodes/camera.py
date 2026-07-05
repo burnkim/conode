@@ -89,6 +89,7 @@ class _CameraSource:
 class Camera(Processor):
     category = "input"
     name = "Camera"
+    kind = "camera"
     inputs = ()  # 소스 노드 — 입력 없음
     params = {
         "device": IntSlider(0, 8, default=0),

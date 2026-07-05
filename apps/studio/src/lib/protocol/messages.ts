@@ -15,7 +15,9 @@ export const NodeInfo = z
 	"id": z.string(),
 	"name": z.string(),
 	"category": Category,
-	"index": z.number().int()
+	"index": z.number().int(),
+	"node_type": z.string().optional(),
+	"inputs": z.array(z.string()).optional()
 	})
 	.strict();
 export type NodeInfo = z.infer<typeof NodeInfo>;

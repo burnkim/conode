@@ -16,6 +16,7 @@ from ..core.processor import FrameCtx, Processor
 class Canny(Processor):
     category = "vision"
     name = "Canny"
+    kind = "canny"
     inputs = ("in",)
     params = {
         "low": IntSlider(0, 255, default=80, modulatable=True),

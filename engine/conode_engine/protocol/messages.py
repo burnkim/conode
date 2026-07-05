@@ -18,6 +18,8 @@ class NodeInfo(BaseModel):
     name: str
     category: Category
     index: int
+    node_type: Optional[str] = None
+    inputs: Optional[list[str]] = None
 
 class Edge(BaseModel):
     model_config = ConfigDict(extra="forbid")

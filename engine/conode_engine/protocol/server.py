@@ -72,7 +72,14 @@ class EngineServer:
 
     def node_infos(self) -> list[NodeInfo]:
         return [
-            NodeInfo(id=n.id, name=n.name, category=n.category, index=n.index)
+            NodeInfo(
+                id=n.id,
+                name=n.name,
+                category=n.category,
+                index=n.index,
+                node_type=n.kind,
+                inputs=list(n.inputs),
+            )
             for n in self.graph.nodes.values()
         ]
 
@@ -137,7 +144,10 @@ class EngineServer:
         if nid in self.graph.nodes:
             return
         node = cls(nid, index=len(self.graph.nodes) + 1)
-        await asyncio.to_thread(node.start)  # 모델 로드는 이벤트 루프 밖에서
+        # start()/stop()는 메인(이벤트 루프) 스레드에서 호출한다. MediaPipe/GL 객체는
+        # 스레드 친화성이 있어 to_thread 로 생성/해제하면 세그폴트가 난다. 모델 로드
+        # 블록(≈1s)은 허용.
+        node.start()
         self.graph.add(node)
         await self.broadcast(self.graph_state())
 
@@ -146,7 +156,7 @@ class EngineServer:
         if node is None:
             return
         try:
-            await asyncio.to_thread(node.stop)
+            node.stop()
         except Exception:
             pass
         self.graph.remove(msg.node)

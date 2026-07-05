@@ -21,7 +21,9 @@
         "id": { "type": "string" },
         "name": { "type": "string" },
         "category": { "$ref": "#/$defs/Category" },
-        "index": { "type": "integer" }
+        "index": { "type": "integer" },
+        "node_type": { "type": "string" },
+        "inputs": { "type": "array", "items": { "type": "string" } }
       }
     },
     "Hello": {

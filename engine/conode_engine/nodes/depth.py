@@ -17,6 +17,7 @@ from ..core.processor import FrameCtx, Processor
 class Depth(Processor):
     category = "depth"
     name = "DepthMap"
+    kind = "depth"
     inputs = ("in",)
     params = {
         "blur": IntSlider(1, 31, default=9),

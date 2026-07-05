@@ -29,6 +29,7 @@ _JOINT = (248, 244, 242)  # near-white
 class Pose(Processor):
     category = "vision"
     name = "Pose"
+    kind = "pose"
     inputs = ("in",)
     params = {
         "min_confidence": Slider(0.1, 0.9, default=0.5),

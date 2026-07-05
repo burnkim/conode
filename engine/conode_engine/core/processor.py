@@ -22,6 +22,7 @@ class FrameCtx:
 class Processor:
     category: str = "generate"
     name: str = "Node"
+    kind: str = "node"  # node_registry 키 (node.add 재구성용)
     inputs: tuple[str, ...] = ()  # 입력 포트 이름들 (소스 노드는 빈 튜플)
     params: dict[str, Any] = {}
 

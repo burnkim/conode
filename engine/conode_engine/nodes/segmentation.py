@@ -18,6 +18,7 @@ from ..core.processor import FrameCtx, Processor
 class Segmentation(Processor):
     category = "vision"
     name = "Segmentation"
+    kind = "segmentation"
     inputs = ("in",)
     params = {
         "threshold": Slider(0.1, 0.9, default=0.5),

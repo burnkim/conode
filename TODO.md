@@ -31,7 +31,12 @@ T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pyte
       ↳ 공통: core/models.py 다운로더(models/ 캐시, PLAN §7), Processor.tick 노드 크래시 격리. mediapipe 의존성(Apache2.0). pytest 44. /live 5노드 28fps. docs/verify/T10-12-vision-pipeline.png.
 - [x] T13 쿼드뷰 UI — 4분할 노드 프리뷰 레이아웃.
       ↳ 2026-07-05 완료: /quad 라우트, 비전 4노드 2x2 그리드(16:9 셀 + name/fps health 오버레이). design/gallery.css dg-quad. E2E: 사람 인프레임 시 Canny 엣지·Pose 스켈레톤·Depth·Seg 컷아웃 전부 29fps. docs/verify/T13-quadview.png.
-- [ ] T14 노드 그래프 편집 UI — 캔버스 노드 배치/연결선/삭제/저장(직렬화 왕복).
+- [x] T14 노드 그래프 편집 UI — 캔버스 노드 배치/연결선/삭제/저장(직렬화 왕복).
+      ↳ 2026-07-05 완료: NodeInfo에 node_type+inputs 추가(재생성). /graph 편집기 — 드래그 배치, SVG 점선 연결선(소스 카테고리색 계승 §5.3), 팔레트 추가(node.add), ✕ 삭제(node.remove), 포트 드래그 연결(node.connect), 연결 클릭 해제, localStorage 저장→로드 왕복(구조+위치). lib/graph/serialize.ts, design/graph.css. 세그폴트 수정: node.start/stop는 메인 스레드(MediaPipe GL 스레드 친화성). E2E: 저장→Pose삭제(4)→로드(5 복원), +canny 추가·드래그연결(cam1→canny2) 실측. docs/verify/T14-graph-editor.png.
+
+## M1 완료 (2026-07-05)
+T7~T14 전부 완료·검증·커밋·push. 비전 파이프라인(Canny/Pose/Depth/Seg) + 쿼드뷰 + 그래프 편집기.
+pytest 56 · vitest 26 · svelte-check 0/0.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
