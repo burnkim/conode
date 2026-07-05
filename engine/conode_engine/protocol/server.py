@@ -37,8 +37,11 @@ def node_registry() -> dict:
     from ..nodes.camera import Camera
     from ..nodes.canny import Canny
     from ..nodes.depth import Depth
+    from ..nodes.gesture_recognizer import GestureRecognizer
+    from ..nodes.hand_tracker import HandTracker
     from ..nodes.live_diffusion import LiveDiffusion
     from ..nodes.pose import Pose
+    from ..nodes.region_mask import RegionMask
     from ..nodes.segmentation import Segmentation
 
     return {
@@ -48,6 +51,9 @@ def node_registry() -> dict:
         "pose": Pose,
         "segmentation": Segmentation,
         "live_diffusion": LiveDiffusion,
+        "hand_tracker": HandTracker,
+        "gesture_recognizer": GestureRecognizer,
+        "region_mask": RegionMask,
     }
 
 

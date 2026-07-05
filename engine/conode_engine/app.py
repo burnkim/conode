@@ -16,28 +16,32 @@ from .core.preview import encode_jpeg, frame_size
 from .core.processor import FrameCtx
 from .nodes.camera import Camera
 from .nodes.canny import Canny
-from .nodes.depth import Depth
+from .nodes.gesture_recognizer import GestureRecognizer
+from .nodes.hand_tracker import HandTracker
 from .nodes.live_diffusion import LiveDiffusion
-from .nodes.pose import Pose
-from .nodes.segmentation import Segmentation
+from .nodes.region_mask import RegionMask
 from .protocol.messages import FramePreview
 from .protocol.server import EngineServer
 
 
 def build_graph() -> tuple[Graph, Camera]:
+    # M3 시그니처: 프레임 제스처 = 영역 디퓨전 (§2)
     cam = Camera("cam1", index=1)
-    graph = Graph()
-    graph.add(cam)
-    for i, node in enumerate(
-        [Canny("canny1"), Pose("pose1"), Depth("depth1"), Segmentation("seg1")], start=2
-    ):
-        node.index = i
-        graph.add(node)
-        graph.connect("cam1", node.id, "in")
+    canny = Canny("canny1", index=2)
+    hands = HandTracker("hands1", index=3)
+    gesture = GestureRecognizer("gesture1", index=4)
+    region = RegionMask("region1", index=5)
     live = LiveDiffusion("live1", index=6)
-    graph.add(live)
+    graph = Graph()
+    for n in (cam, canny, hands, gesture, region, live):
+        graph.add(n)
+    graph.connect("cam1", "canny1", "in")
+    graph.connect("cam1", "hands1", "in")
+    graph.connect("hands1", "gesture1", "hands")
+    graph.connect("gesture1", "region1", "gesture")
     graph.connect("cam1", "live1", "in")
-    graph.connect("canny1", "live1", "control")  # ControlNet 컨디셔닝
+    graph.connect("canny1", "live1", "control")  # ControlNet
+    graph.connect("region1", "live1", "mask")  # 제스처 영역만 디퓨전
     return graph, cam
 
 
@@ -64,10 +68,11 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
                 ema_fps = inst if ema_fps == 0.0 else ema_fps * 0.9 + inst * 0.1
                 seq += 1
                 for node in list(graph.nodes.values()):  # 그래프 편집 중 안전 순회
-                    payload = encode_jpeg(node.output)
+                    pf = node.preview_frame()
+                    payload = encode_jpeg(pf)
                     if payload is None:
                         continue
-                    w, h = frame_size(node.output)
+                    w, h = frame_size(pf)
                     await server.broadcast(
                         FramePreview(
                             node=node.id,

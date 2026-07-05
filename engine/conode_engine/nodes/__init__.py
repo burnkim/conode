@@ -2,8 +2,21 @@
 from .camera import Camera
 from .canny import Canny
 from .depth import Depth
+from .gesture_recognizer import GestureRecognizer
+from .hand_tracker import HandTracker
 from .live_diffusion import LiveDiffusion
 from .pose import Pose
+from .region_mask import RegionMask
 from .segmentation import Segmentation
 
-__all__ = ["Camera", "Canny", "Depth", "LiveDiffusion", "Pose", "Segmentation"]
+__all__ = [
+    "Camera",
+    "Canny",
+    "Depth",
+    "GestureRecognizer",
+    "HandTracker",
+    "LiveDiffusion",
+    "Pose",
+    "RegionMask",
+    "Segmentation",
+]

@@ -13,7 +13,7 @@ import numpy as np
 
 
 def encode_jpeg(frame: Optional[np.ndarray], quality: int = 70) -> Optional[str]:
-    if frame is None:
+    if not isinstance(frame, np.ndarray):
         return None
     if frame.ndim == 2:
         frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
@@ -24,7 +24,7 @@ def encode_jpeg(frame: Optional[np.ndarray], quality: int = 70) -> Optional[str]
 
 
 def frame_size(frame: Optional[np.ndarray]) -> tuple[int, int]:
-    if frame is None:
+    if not isinstance(frame, np.ndarray):
         return (0, 0)
     h, w = frame.shape[:2]
     return (int(w), int(h))

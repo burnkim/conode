@@ -54,6 +54,19 @@ pytest 56 · vitest 26 · svelte-check 0/0.
 ## M2 상태 (2026-07-05)
 포터블 코어(T15~T17 부분·T20 벤치) Mac 검증 완료. 실디퓨전(T18 StreamDiffusion+LCM·T19 TRT·T20 25fps)은 코드+문서 작성, **4090 배포 시 검증 대기**(블라인드). pytest 67.
 
+# TODO — M3 제스처 (시그니처 A: 프레임 제스처 = 영역 디퓨전, PLAN §2)
+- [x] T21 HandTracker 노드 — MediaPipe HandLandmarker(21×2 랜드마크) + 오버레이 프리뷰 + 폴백. [Mac 검증]
+      ↳ 2026-07-05 완료: nodes/hand_tracker.py(HandLandmarker num_hands=2, 21점, 스켈레톤 오버레이, 구조화 output {hands,w,h}), gesture/one_euro.py. Processor.preview_frame(구조화 output 노드 대응) + encode 가드. hand_landmarker.task 다운로더.
+- [x] T22 GestureRecognizer 노드 — 규칙 기반 v1 + 이벤트 + JSON 규칙 확장. [Mac 검증]
+      ↳ 2026-07-05 완료: gesture/rules.py(recognize: frame/pinch/point/palm, LM 인덱스맵, eval_json_rules dist/extended/curled→emit), nodes/gesture_recognizer.py(point-hold 지속시간·palm-push 엣지, 주석 프리뷰).
+- [x] T23 RegionMask 노드 — 제스처→사각/원형 마스크, feather, one-euro 관성. [Mac 검증]
+      ↳ 2026-07-05 완료: nodes/region_mask.py(rect/circle 마스크, OneEuroVec 스무딩, feather, no_gesture full/none). 결정적 테스트.
+- [x] T24 파이프라인 통합 + gesture-rules 스킬. [Mac 검증]
+      ↳ 2026-07-05 완료: 그래프 cam→hands→gesture→region→live.mask(+cam→live.in, cam→canny→live.control). skills/gesture-rules/SKILL.md. 통합 테스트(합성 프레임 제스처→영역만 디퓨전, 외부 원본 유지) 통과. /live 6노드 30fps. docs/verify/T21-24-gesture-pipeline.png. pytest 78.
+
+## M3 완료 (2026-07-05)
+T21~T24 전부 완료·검증(Mac). 시그니처 "프레임 제스처=영역 디퓨전" 동작. pytest 78.
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

@@ -10,6 +10,8 @@ import time
 from dataclasses import dataclass
 from typing import Any, Optional
 
+import numpy as np
+
 from .param_spec import ParamStore
 
 
@@ -33,7 +35,8 @@ class Processor:
         self.tick_count = 0
         self.last_ms = 0.0
         self.last_error: Optional[str] = None
-        self.output: Any = None  # 최신 출력 (다운스트림이 읽음)
+        self.output: Any = None  # 최신 출력 (다운스트림이 읽음 — 프레임 또는 구조화 데이터)
+        self.preview: Any = None  # 구조화 output 노드가 표시용 프레임을 여기 둔다
 
     # --- 파라미터 ---
     def get(self, path: str) -> Any:
@@ -68,6 +71,14 @@ class Processor:
 
     def process(self, ctx: FrameCtx, inputs: dict[str, Any]) -> Any:
         """서브클래스 override. inputs[port] = 업스트림 노드 output. 기본은 no-op."""
+        return None
+
+    def preview_frame(self) -> Optional[np.ndarray]:
+        """UI 프리뷰용 프레임. 구조화 output 노드는 self.preview 를 세팅한다."""
+        if isinstance(self.preview, np.ndarray):
+            return self.preview
+        if isinstance(self.output, np.ndarray):
+            return self.output
         return None
 
     # --- 직렬화 ---

@@ -41,7 +41,7 @@
 <div class="dg-page">
 	<header>
 		<h1 class="dg-h1">conode · live</h1>
-		<p class="dg-sub mono">M1 — Vision pipeline · Camera → Canny · Pose · Depth · Segmentation</p>
+		<p class="dg-sub mono">M3 — 제스처 = 영역 디퓨전 · Camera → Hand → Gesture → RegionMask → LiveDiffusion</p>
 		<nav class="dg-nav mono">
 			<a href="/design">design</a>
 			<a href="/nodes">nodes</a>
@@ -59,7 +59,7 @@
 	</header>
 
 	<section class="dg-section">
-		<h2 class="dg-section-title">Graph — Camera → 4 vision nodes</h2>
+		<h2 class="dg-section-title">Graph — 프레임 제스처 = 영역 디퓨전 (§2)</h2>
 		<div class="dg-nodes">
 			{#each client.nodes as node (node.id)}
 				{@const f = client.frames[node.id]}
