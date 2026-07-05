@@ -44,9 +44,15 @@ pytest 56 · vitest 26 · svelte-check 0/0.
 - [x] T16 Similar Image Filter — 프레임 유사도 스킵(sif_threshold/sif_max_skip). [Mac 검증]
       ↳ 2026-07-05 완료: diffusion/sif.py(연속 프레임 유사도, max_skip 캡). LiveDiffusion advanced에 연결. 결정적 테스트 3.
 - [~] T17 RegionApply/Composite — 마스크 영역만 디퓨전 결과로 치환(§2). [부분: LiveDiffusion.process 안에 mask 영역 치환 구현·테스트. 독립 Composite 노드는 추후]
-- [ ] T18 StreamDiffusion 백엔드 — SD-Turbo/LCM + Multi-ControlNet (CUDA). [4090, 코드+문서, 배포 검증]
-- [ ] T19 TensorRT 빌드 캐시 + CUDA 스트림 (realtime-perf 스킬). [4090]
-- [ ] T20 25fps 달성 벤치 (§6 예산) — DoD. [4090 only]
+- [x] T18 StreamDiffusion 백엔드 — LCM-LoRA(상업OK §11) + ControlNet (CUDA). [4090, 코드+문서, 배포 검증]
+      ↳ 2026-07-05 완료(블라인드): diffusion/streamdiffusion_backend.py(LCM img2img, creativity→t_index_list, TRT accel, torch/streamdiffusion 지연임포트), select_backend가 CUDA시 우선(Mac은 Fallback 확인). requirements-cuda.txt. **Mac 실행검증 불가 — 4090 배포 시 검증**.
+- [x] T19 TensorRT 빌드 캐시 + CUDA 스트림 (realtime-perf 스킬). [4090]
+      ↳ 2026-07-05 완료: skills/realtime-perf/SKILL.md(§6 예산표, 프로파일링, 지연누적금지 패턴 latest-wins/기한리셋/SIF/크래시격리, TRT 캐시 engine_dir, CUDA 스트림, 백엔드 교체 지점).
+- [~] T20 25fps 달성 벤치 (§6 예산) — DoD. [벤치 하네스는 완료·Mac 검증 / 25fps LiveDiffusion은 4090 DoD]
+      ↳ 2026-07-05: conode_engine/bench.py(`python -m conode_engine.bench <node|all> [--enforce]`, §6 예산 비교, 초과 시 exit1). Mac 실측: canny 0.44ms·depth 0.29ms·seg 4.78ms(예산내), pose 10.2ms(예산초과=Mac CPU vs 4090 TRT). test 3. **25fps LiveDiffusion 실측은 4090 배포 DoD**.
+
+## M2 상태 (2026-07-05)
+포터블 코어(T15~T17 부분·T20 벤치) Mac 검증 완료. 실디퓨전(T18 StreamDiffusion+LCM·T19 TRT·T20 25fps)은 코드+문서 작성, **4090 배포 시 검증 대기**(블라인드). pytest 67.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.

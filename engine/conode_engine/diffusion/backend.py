@@ -66,7 +66,16 @@ class FallbackBackend(DiffusionBackend):
         return cv2.addWeighted(tinted, a, img, 1.0 - a, 0)
 
 
-def select_backend() -> DiffusionBackend:
-    """가용 백엔드 선택. 지금은 StreamDiffusion(CUDA/TRT) 미가용 → 폴백.
-    T18에서 StreamDiffusionBackend 를 여기서 우선 시도한다."""
+def select_backend(config=None) -> DiffusionBackend:
+    """가용 백엔드 선택. CUDA(4090)면 StreamDiffusion+LCM, 아니면 Fallback(Mac).
+    torch/CUDA 미존재 시 조용히 Fallback 으로 우회한다."""
+    try:
+        import torch  # Mac 개발기엔 미설치 → ImportError → Fallback
+
+        if torch.cuda.is_available():
+            from .streamdiffusion_backend import StreamDiffusionBackend
+
+            return StreamDiffusionBackend(config)
+    except Exception:
+        pass
     return FallbackBackend()

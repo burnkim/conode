@@ -1,0 +1,22 @@
+# conode-engine CUDA/4090 런타임 (M2). Mac 개발기에는 설치하지 않는다.
+# 실디퓨전(StreamDiffusion+TRT+LCM)은 RTX 4090 배포 환경에서만 동작한다.
+#
+# 설치 (CUDA 12.x, Python 3.10-3.12):
+#   pip install -r requirements-cuda.txt
+#   # StreamDiffusion 은 소스 설치 + TRT 가속 추가 셋업이 필요:
+#   #   pip install git+https://github.com/cumulo-autumn/StreamDiffusion.git@main#egg=streamdiffusion[tensorrt]
+#   #   python -m streamdiffusion.tools.install-tensorrt
+#
+# 모델 가중치는 앱 미포함(다운로더, PLAN §7). LCM-LoRA = permissive/상업 OK(§11).
+
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch>=2.1
+torchvision>=0.16
+diffusers>=0.27
+transformers>=4.38
+accelerate>=0.27
+# TensorRT (StreamDiffusion tools 로 설치 권장):
+# tensorrt
+# polygraphy
+# onnx
+# onnx-graphsurgeon
