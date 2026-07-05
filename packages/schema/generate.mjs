@@ -63,7 +63,8 @@ function emitZod() {
 	];
 	for (const name of ORDER) {
 		lines.push(zodDef(name, defs[name]));
-		if (isMessage(defs[name])) lines.push(`export type ${name} = z.infer<typeof ${name}>;`);
+		// 모든 스키마에 대응 타입 export (NodeInfo/Category/ParamValue 포함).
+		lines.push(`export type ${name} = z.infer<typeof ${name}>;`);
 		lines.push('');
 	}
 	lines.push(

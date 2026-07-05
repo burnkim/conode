@@ -9,6 +9,14 @@
       ↳ 2026-07-05 완료: protocol.schema.json(원천, 판별유니온) + generate.mjs로 zod(apps/studio/src/lib/protocol/messages.ts)·pydantic(engine/conode_engine/protocol/messages.py) 생성(R3). 공유 픽스처 examples.json으로 계약 테스트 양쪽 통과(pytest 17, vitest 16). R7 추가 의존성: zod(UI 런타임), vitest(UI dev), pydantic·pytest(engine, py3.12 venv=engine/.venv).
 - [x] T5 engine 스켈레톤: WS 서버 + scheduler + ParamSpec — 완료조건: pytest 통과
       ↳ 2026-07-05 완료: core/param_spec(6위젯+Group+ParamStore, R2/R6/R8), processor(tick/process, R4), latest_wins(드랍), scheduler(노드별 fps·지연누적금지), protocol/server(hello→node.list, param.set 적용, frame.preview broadcast, R3/R5). pytest 26 passed(프로토콜17+엔진9, WS 핸드셰이크·param.set·broadcast 왕복 포함). 런타임 의존성 설치(websockets/numpy/opencv/pillow).
-- [ ] T6 Camera 노드 E2E — 완료조건: 카메라 프리뷰가 NodeCard 안에 15fps+로 표시, 실측 fps 배지 동작
-## Questions
-(비어 있음)
+- [x] T6 Camera 노드 E2E — 완료조건: 카메라 프리뷰가 NodeCard 안에 15fps+로 표시, 실측 fps 배지 동작
+      ↳ 2026-07-05 완료: engine Camera 노드(OpenCV 캡처 스레드=R4, 합성 폴백) → frame.preview(320x180 JPEG over WS) → UI ConodeClient(zod 검증) → /live 의 NodeCard 인라인 프리뷰 + 실측 fps 배지. 실카메라로 확인: source=camera, 28~29fps(>15) 초록 배지, seq 연속 증가, exposure/mirror param.set 배선. 스크린샷 docs/verify/T6-camera-live.png.
+
+## M0 완료 (2026-07-05)
+T1~T6 전부 완료·검증·커밋·push. svelte-check 0/0 · vitest 16 · pytest 30.
+
+## Questions / 리뷰 대기 (기획 세션)
+- Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
+- Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).
+- Q3 카메라 권한: 실카메라는 macOS TCC 그랜트 필요(첫 cap.read()가 블록). 배포 시 Tauri 앱 번들의 카메라 usage 권한/entitlement 설정 필요.
+- Q4 프로토콜 v0는 node.list에 ParamSpec 미포함(id/name/category/index만). ParamSpec→UI 자동생성(R2)의 완전한 배선은 M1에서 node.describe 확장 필요.

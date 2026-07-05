@@ -110,3 +110,33 @@
 .dg-nav a:hover {
 	text-decoration: underline;
 }
+
+/* --- 라이브 프리뷰 이미지 (T6) --- */
+.dg-preview-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.dg-status {
+	margin-top: calc(var(--space-unit) * 2);
+	font-size: var(--fs-value);
+	color: var(--text-lo);
+}
+.dg-status .dot {
+	display: inline-block;
+	width: calc(var(--space-unit) * 2);
+	height: calc(var(--space-unit) * 2);
+	border-radius: 50%;
+	background: var(--text-lo);
+	margin-right: calc(var(--space-unit) * 1.5);
+	vertical-align: middle;
+}
+.dg-status.open .dot {
+	background: var(--state-ok);
+}
+.dg-status.closed .dot {
+	background: var(--state-error);
+}

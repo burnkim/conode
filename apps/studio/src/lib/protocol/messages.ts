@@ -5,8 +5,10 @@ import { z } from 'zod';
 export const PROTOCOL_VERSION = 0 as const;
 
 export const ParamValue = z.union([z.number(), z.string(), z.boolean()]);
+export type ParamValue = z.infer<typeof ParamValue>;
 
 export const Category = z.enum(["input", "vision", "depth", "generate", "audio", "output"]);
+export type Category = z.infer<typeof Category>;
 
 export const NodeInfo = z
 	.object({
@@ -16,6 +18,7 @@ export const NodeInfo = z
 	"index": z.number().int()
 	})
 	.strict();
+export type NodeInfo = z.infer<typeof NodeInfo>;
 
 export const Hello = z
 	.object({
