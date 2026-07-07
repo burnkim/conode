@@ -6,10 +6,12 @@ from .canny import Canny
 from .color_grade import ColorGrade
 from .crossfade import Crossfade
 from .depth import Depth
+from .envelope_follower import EnvelopeFollower
 from .feedback import FeedbackLoop
 from .gesture_recognizer import GestureRecognizer
 from .hand_tracker import HandTracker
 from .image import Image
+from .lfo import LFO
 from .live_diffusion import LiveDiffusion
 from .mapped_output import MappedOutput
 from .mask_compose import MaskCompose
@@ -20,10 +22,11 @@ from .region_mask import RegionMask
 from .segmentation import Segmentation
 from .style_preset import StylePreset
 from .switch import Switch
+from .video_file import VideoFile
 
 __all__ = [
     "AudioIn", "Blend", "Camera", "Canny", "ColorGrade", "Crossfade", "Depth",
-    "FeedbackLoop", "GestureRecognizer", "HandTracker", "Image", "LiveDiffusion",
-    "MappedOutput", "MaskCompose", "ModMatrix", "Pose", "Recorder", "RegionMask",
-    "Segmentation", "StylePreset", "Switch",
+    "EnvelopeFollower", "FeedbackLoop", "GestureRecognizer", "HandTracker", "Image",
+    "LFO", "LiveDiffusion", "MappedOutput", "MaskCompose", "ModMatrix", "Pose",
+    "Recorder", "RegionMask", "Segmentation", "StylePreset", "Switch", "VideoFile",
 ]

@@ -50,12 +50,27 @@ class ModMatrix(Processor):
     CURVES = ["lin", "exp", "log"]
 
     def available_sources(self) -> list[str]:
-        """스템×특성 + LFO + 제스처 소스 카탈로그."""
+        """스템×특성 + LFO + 제스처 + 신호 노드(sig.<name>) 소스 카탈로그."""
         from ..audio.features import FEATURES
 
         n_stems = 12  # AudioIn 기본 채널 수
         stems = [f"stem{i}.{feat}" for i in range(n_stems) for feat in FEATURES]
-        return stems + list(self.matrix.lfos.keys()) + self._GESTURE_SOURCES
+        sigs = [f"sig.{n.signal_name()}" for n in self._signal_nodes()]
+        return stems + list(self.matrix.lfos.keys()) + self._GESTURE_SOURCES + sigs
+
+    def _signal_nodes(self) -> list:
+        """그래프의 신호 노드(LFO/EnvelopeFollower — signal_name() 보유)."""
+        if self.graph is None:
+            return []
+        return [n for n in self.graph.nodes.values() if hasattr(n, "signal_name")]
+
+    def _collect_signals(self) -> dict:
+        """신호 노드 출력값 → {name: value} (매 프레임, 이미 topo 상류에서 tick됨)."""
+        out: dict = {}
+        for n in self._signal_nodes():
+            val = (n.output or {}).get("value", 0.0) if isinstance(n.output, dict) else 0.0
+            out[n.signal_name()] = float(val)
+        return out
 
     def available_targets(self) -> list[str]:
         """그래프 전체의 modulatable 파라미터 (R8) → 'nodeId.path'."""
@@ -110,7 +125,8 @@ class ModMatrix(Processor):
     def process(self, ctx: FrameCtx, inputs: dict) -> Optional[dict]:
         audio = inputs.get("audio") if isinstance(inputs.get("audio"), dict) else {}
         gesture = inputs.get("gesture") if isinstance(inputs.get("gesture"), dict) else {}
-        features = {**audio, "gesture": gesture}  # 오디오 스템 + 제스처 소스 결합
+        # 오디오 스템 + 제스처 + 신호 노드(LFO/Envelope) 소스 결합
+        features = {**audio, "gesture": gesture, "signals": self._collect_signals()}
         if not self.get("enable") or self.graph is None:
             self.preview = self._viz(features, {})
             return {"features": features, "applied": {}}

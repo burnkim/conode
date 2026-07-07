@@ -34,16 +34,17 @@ cd .. && engine/.venv/bin/python -m conode_engine              # ws://127.0.0.1:
 - **제스처 = 영역 디퓨전 (§2)**: 양손으로 프레임을 만들면 그 사각형 내부만 디퓨전.
   `Camera → HandTracker → GestureRecognizer → RegionMask → LiveDiffusion.mask`.
 - **오디오 12스템 ModMatrix (§3)**: 스템×특성 → modulatable 파라미터 모듈레이션 + 프롬프트
-  바인딩 `(star:{kick.rms})`. "제품의 심장".
+  바인딩 `(star:{kick.rms})`. "제품의 심장". `/audio` 에서 소스→타깃 셀 편집(추가/amount/curve/삭제).
+  소스 = 스템×특성 + LFO + 제스처 + 신호 노드(`sig.<name>` — LFO·EnvelopeFollower).
 
-## 노드 (21종)
+## 노드 (24종)
 | 카테고리 | 노드 |
 |---|---|
-| Input | Camera · Image · AudioIn |
+| Input | Camera · VideoFile · Image · AudioIn |
 | Vision | Canny · Pose · Segmentation · HandTracker |
 | Analysis(Depth) | DepthMap · GestureRecognizer · RegionMask · MaskCompose |
 | Generate | LiveDiffusion · Blend · Crossfade · ColorGrade · Switch · FeedbackLoop · StylePreset |
-| Audio | ModMatrix |
+| Audio | ModMatrix · LFO · EnvelopeFollower |
 | Output | MappedOutput · Recorder |
 
 > 노드는 엔진 `Processor` 클래스만 추가하면 UI(파라미터 패널·프리뷰)가 **ParamSpec 에서
@@ -88,6 +89,8 @@ presets/      예제 그래프 프리셋
 
 리뷰 후속 완료: ParamSpec→UI 자동생성(R2 척추), 노드별 fps+latest-wins, v1 노드 8종
 추가(총 21종), 제스처 JSON 규칙·ModMatrix 제스처 소스, 씬/큐 + 제스처 이벤트 바인딩.
+추가(2026-07-07): 스펙 티어(potato~4090), 루트 홈, ModMatrix 매트릭스 에디터,
+VideoFile·LFO·EnvelopeFollower 노드(총 24종).
 남은 로드맵: FaceMesh(v1.5), 메쉬 워프(v1.5), 준실시간 스템 분리(v2), MIDI/OSC In,
 플러그인 SDK.
 

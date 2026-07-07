@@ -133,9 +133,12 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 # TODO — 로드맵 노드 + 에디터 (2026-07-07, /goal 이어서: modmatrix 에디터 → video/envelope/lfo 노드)
 - [x] E1 ModMatrix 매트릭스 에디터 UI — /audio 에 소스→타깃 셀 편집(추가/amount/curve/삭제). R3: modmatrix.get/state/cell.set/cell.clear 스키마 먼저.
       ↳ 2026-07-07: 스키마 4메시지+ModCellSpec 추가·재생성. ModMatrix.set_cell/clear_cell/cells_state, 노드 available_sources(102)/targets(R8)/matrix_state, 서버 3핸들러(변경 시 broadcast). client 상태/메서드, /audio 셀 리스트 에디터(gallery.css mm-*). pytest+6(test_modmatrix_editor). E2E: /audio 셀 추가(4→5)·삭제(5→4) 왕복 실측. docs/verify/modmatrix-editor.png.
-- [ ] E2 Video File 노드 — 파일에서 프레임 재생(cv2.VideoCapture, loop/속도). Camera 대체 입력, Mac 검증.
-- [ ] E3 EnvelopeFollower 노드 — 오디오/신호 → 어택/릴리스 엔벨로프 (modulatable 소스 보강). Mac 검증.
-- [ ] E4 LFO 노드 (standalone) — sine/tri/saw/square LFO 를 독립 노드로(rate/phase/shape), ModMatrix 소스로 노출. Mac 검증.
+- [x] E2 Video File 노드 — 파일에서 프레임 재생(cv2.VideoCapture, loop/속도). Camera 대체 입력, Mac 검증.
+      ↳ 2026-07-07: nodes/video_file.py(백그라운드 캡처 스레드=R4, path/speed/loop/mirror, 파일 fps×speed 페이싱, EOF 되감기, 파일 없으면 합성 폴백). E2E: /graph 팔레트 추가→실행(에러 없음). pytest+2.
+- [x] E3 EnvelopeFollower 노드 — 오디오/신호 → 어택/릴리스 엔벨로프 (modulatable 소스 보강). Mac 검증.
+      ↳ 2026-07-07: nodes/envelope_follower.py(stem×feature 선택, attack/release 밸리스틱, gain, 히스토리 프리뷰). signal_name()→ModMatrix 'sig.env1' 소스. E2E: 팔레트 추가→실행. pytest+2.
+- [x] E4 LFO 노드 (standalone) — sine/tri/saw/square LFO 를 독립 노드로(rate/phase/shape), ModMatrix 소스로 노출. Mac 검증.
+      ↳ 2026-07-07: nodes/lfo.py(name/shape/rate/phase/amount, 파형+위상마커 프리뷰). ModMatrix 통합: resolve 'sig.<name>', 노드 _collect_signals/_signal_nodes, available_sources 에 sig.* 추가. registry 24종, /graph 팔레트 갱신. E2E: LFO 추가→사인파 프리뷰+자동파라미터(R2)→/audio 소스 'sig.lfo1'(102→103) 실측. pytest+7(test_roadmap_nodes). docs/verify/roadmap-nodes-live.png.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.

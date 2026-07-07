@@ -47,16 +47,18 @@ from .messages import (
 def node_registry() -> dict:
     """node_type → 클래스. 무거운 임포트(cv2/mediapipe)를 지연."""
     from ..nodes import (
-        AudioIn, Blend, Camera, Canny, ColorGrade, Crossfade, Depth, FeedbackLoop,
-        GestureRecognizer, HandTracker, Image, LiveDiffusion, MappedOutput, MaskCompose,
-        ModMatrix, Pose, Recorder, RegionMask, Segmentation, StylePreset, Switch,
+        AudioIn, Blend, Camera, Canny, ColorGrade, Crossfade, Depth, EnvelopeFollower,
+        FeedbackLoop, GestureRecognizer, HandTracker, Image, LFO, LiveDiffusion,
+        MappedOutput, MaskCompose, ModMatrix, Pose, Recorder, RegionMask, Segmentation,
+        StylePreset, Switch, VideoFile,
     )
 
     return {
-        "camera": Camera, "image": Image, "canny": Canny, "pose": Pose,
-        "depth": Depth, "segmentation": Segmentation, "hand_tracker": HandTracker,
-        "gesture_recognizer": GestureRecognizer, "region_mask": RegionMask,
-        "live_diffusion": LiveDiffusion, "audio_in": AudioIn, "mod_matrix": ModMatrix,
+        "camera": Camera, "video_file": VideoFile, "image": Image, "canny": Canny,
+        "pose": Pose, "depth": Depth, "segmentation": Segmentation,
+        "hand_tracker": HandTracker, "gesture_recognizer": GestureRecognizer,
+        "region_mask": RegionMask, "live_diffusion": LiveDiffusion, "audio_in": AudioIn,
+        "mod_matrix": ModMatrix, "lfo": LFO, "envelope_follower": EnvelopeFollower,
         "blend": Blend, "crossfade": Crossfade, "color_grade": ColorGrade,
         "switch": Switch, "mask_compose": MaskCompose, "feedback": FeedbackLoop,
         "style_preset": StylePreset, "mapped_output": MappedOutput, "recorder": Recorder,

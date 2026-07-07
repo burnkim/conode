@@ -78,4 +78,7 @@ def test_registry_has_all_new():
     reg = node_registry()
     for k in ["image", "blend", "crossfade", "color_grade", "switch", "mask_compose", "feedback", "style_preset"]:
         assert k in reg
-    assert len(reg) == 21
+    # E2~E4 로드맵 노드
+    for k in ["video_file", "lfo", "envelope_follower"]:
+        assert k in reg
+    assert len(reg) == 24

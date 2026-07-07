@@ -113,6 +113,9 @@ class ModMatrix:
                 if feat == "value":
                     return float(g.get("value") or 0.0)
                 return 1.0 if g.get("type") == feat else 0.0
+            elif head == "sig":  # 신호 노드 (LFO/EnvelopeFollower) — sig.<name>
+                sigs = features.get("signals", {}) if isinstance(features, dict) else {}
+                return float(sigs.get(feat, 0.0))
         return 0.0
 
     def apply(
