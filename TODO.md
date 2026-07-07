@@ -121,10 +121,14 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 # TODO — 홈 + 스펙 티어 (2026-07-07, /goal: 우선순위 순 + 다양한 사양 리팩토링)
 - [x] H1 루트 홈 랜딩 — `m0.studio shell` 플레이스홀더 교체. 엔진 상태 + 8 라우트 카드 + 실행 안내(2 프로세스) + 스펙 티어 설명. R1(design/ 클래스만).
       ↳ 2026-07-07: routes/+page.svelte 재작성, gallery.css dg-home*/dg-hint 추가. svelte-check 0/0. /browse E2E: 다크 캔버스·8카드·engine:closed 힌트 렌더. docs/verify/home-landing.png.
-- [ ] H2 스펙 티어 코어 — diffusion/spec.py(SpecProfile + TIERS potato/mps_low/cuda_3070/cuda_max + auto_detect). backend.select_backend(profile) 티어 기반으로. FallbackBackend 저해상도(저크기) 지원. pytest.
-- [ ] H3 DiffusersBackend — torch diffusers img2img LCM, device auto(cuda/mps/cpu). 3070(CUDA)·이 Mac(MPS)·CPU 공용. 지연 임포트, 의존성 없으면 select_backend 가 potato 로 폴백. requirements-diffusers.txt.
-- [ ] H4 LiveDiffusion tier 파라미터(Enum) + 엔진 `--tier` 옵션 + auto 감지 배선. A1 자동 UI 로 /live 에서 티어 선택. 이 Mac potato E2E 확인.
-- [ ] H5 문서 — docs/spec-tiers.md(티어별 하드웨어·설치·성능), README 티어 표 반영.
+- [x] H2 스펙 티어 코어 — diffusion/spec.py(SpecProfile + TIERS potato/mps_low/cuda_3070/cuda_max + auto_detect). backend.select_backend(profile) 티어 기반으로. FallbackBackend 저해상도(저크기) 지원. pytest.
+      ↳ 2026-07-07: spec.py(SpecProfile + TIERS 4종 + available_devices/device_ok/auto_detect/resolve/downgrade). select_backend(profile) 재작성 — 디바이스/패키지 부재 시 potato 폴백. FallbackBackend(profile) 저해상도 작업→입력크기 복원. test_spec.py 11.
+- [x] H3 DiffusersBackend — torch diffusers img2img LCM, device auto(cuda/mps/cpu). 3070(CUDA)·이 Mac(MPS)·CPU 공용. 지연 임포트, 의존성 없으면 select_backend 가 potato 로 폴백. requirements-diffusers.txt.
+      ↳ 2026-07-07: diffusers_backend.py(AutoPipelineForImage2Image + LCMScheduler + load_lora_weights/fuse_lora, device별 dtype). torch/diffusers 지연 임포트(미설치도 모듈 임포트 안전). requirements-diffusers.txt(Apple Silicon/CUDA 공용). **실모델 실행은 torch 설치 후/GPU 배포 검증(블라인드)**.
+- [x] H4 LiveDiffusion tier 파라미터(Enum) + 엔진 `--tier` 옵션 + auto 감지 배선. A1 자동 UI 로 /live 에서 티어 선택. 이 Mac potato E2E 확인.
+      ↳ 2026-07-07: LiveDiffusion.tier Enum(TIER_NAMES), start()가 resolve→select_backend, 런타임 티어변경 재선택. app.py --tier/--host/--port/--fps argparse + 시작 시 티어/디바이스 출력. E2E(Apple M1 Max, --tier potato): /live LiveDiffusion 카드에 tier 드롭다운(potato) 자동 렌더(R2), 14fps latest-wins. docs/verify/H4-tier-live.png.
+- [x] H5 문서 — docs/spec-tiers.md(티어별 하드웨어·설치·성능), README 티어 표 반영.
+      ↳ 2026-07-07: docs/spec-tiers.md(티어 표·선택·설치·폴백 규칙·검증 상태), README M2 행/라이브 악기 기능/실행안내 티어 반영.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.

@@ -24,6 +24,7 @@ from ..core.param_spec import (
 from ..core.processor import FrameCtx, Processor
 from ..diffusion.backend import DiffusionRequest, select_backend
 from ..diffusion.sif import SimilarImageFilter
+from ..diffusion.spec import TIER_NAMES, resolve
 
 
 class LiveDiffusion(Processor):
@@ -32,6 +33,7 @@ class LiveDiffusion(Processor):
     kind = "live_diffusion"
     inputs = ("in", "control", "mask")
     params = {
+        "tier": Enum(TIER_NAMES, default="auto"),  # 스펙 티어(하드웨어별). auto=자동 감지
         "prompt": Text(default="a field of stars, geometric", multiline=True),
         "negative": Text(default="blurry, low quality"),
         "prompt_strength": Slider(0.0, 2.0, default=1.0, modulatable=True),
@@ -60,10 +62,15 @@ class LiveDiffusion(Processor):
         self._backend = None
         self._sif = SimilarImageFilter()
         self._last: Optional[np.ndarray] = None
+        self._tier: Optional[str] = None
+        self._profile = None
 
     def start(self) -> None:
-        self._backend = select_backend()
-        self._backend.prepare()
+        tier = self.get("tier")
+        self._profile = resolve(tier)  # 티어 이름 → SpecProfile (device 확정)
+        self._tier = tier
+        self._backend = select_backend(self._profile)  # 의존성 없으면 내부에서 potato 폴백
+        self._backend.prepare()  # R4: tick 밖(여기)에서 무거운 준비
 
     def stop(self) -> None:
         if self._backend is not None:
@@ -71,13 +78,21 @@ class LiveDiffusion(Processor):
 
     @property
     def backend_name(self) -> str:
-        return self._backend.name if self._backend else "(none)"
+        if not self._backend:
+            return "(none)"
+        # 실행 백엔드 + 실제 적용된 티어(폴백됐을 수 있음) 표기
+        prof = getattr(self._backend, "profile", None)
+        tier = prof.tier if prof is not None else "?"
+        return f"{self._backend.name}·{tier}"
 
     def process(self, ctx: FrameCtx, inputs: dict) -> Optional[np.ndarray]:
         img = inputs.get("in")
         if img is None:
             return None
-        if self._backend is None:
+        # 티어 변경(사용자 선택) → 백엔드 재선택. 모델 리로드는 1회성 사용자 액션이라
+        # 프레임 루프의 상시 blocking(R4 금지)과 구분된다. potato 는 즉시.
+        if self._backend is None or self.get("tier") != self._tier:
+            self.stop()
             self.start()
 
         # Similar Image Filter — 유사 프레임이면 직전 결과 재사용

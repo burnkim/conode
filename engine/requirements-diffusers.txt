@@ -1,0 +1,22 @@
+# conode-engine Diffusers 백엔드 런타임 — mps_low(Apple Silicon) / cuda_3070(CUDA) 티어.
+# StreamDiffusion/TensorRT 없이 순수 diffusers 라 설치가 가볍고, Apple Silicon(MPS)·
+# CUDA·CPU 를 한 벌로 커버한다. TRT 최고성능(cuda_max)은 requirements-cuda.txt 참고.
+#
+# 설치 — Apple Silicon (이 Mac, MPS):
+#   engine/.venv/bin/pip install -r engine/requirements-diffusers.txt
+#   그다음: python -m conode_engine --tier mps_low   (torch 감지되면 자동 auto→mps_low)
+#
+# 설치 — CUDA (예: 3070):
+#   pip install --extra-index-url https://download.pytorch.org/whl/cu121 -r engine/requirements-diffusers.txt
+#   그다음: python -m conode_engine --tier cuda_3070
+#
+# 모델 가중치는 앱 미포함(최초 실행 시 HuggingFace 다운로드, PLAN §7).
+# SD1.5 + LCM-LoRA = permissive/상업 OK (§11).
+
+torch>=2.1
+torchvision>=0.16
+diffusers>=0.27
+transformers>=4.38
+accelerate>=0.27
+peft>=0.9          # LoRA(load_lora_weights/fuse_lora)
+Pillow>=10.0

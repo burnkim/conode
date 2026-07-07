@@ -28,7 +28,7 @@ from .protocol.messages import FramePreview
 from .protocol.server import EngineServer
 
 
-def build_graph() -> tuple[Graph, Camera]:
+def build_graph(tier: str = "auto") -> tuple[Graph, Camera]:
     # M3 제스처=영역 디퓨전 (§2) + M4 오디오 ModMatrix (§3)
     cam = Camera("cam1", index=1)
     canny = Canny("canny1", index=2)
@@ -36,6 +36,7 @@ def build_graph() -> tuple[Graph, Camera]:
     gesture = GestureRecognizer("gesture1", index=4)
     region = RegionMask("region1", index=5)
     live = LiveDiffusion("live1", index=6)
+    live.set("tier", tier)  # 스펙 티어(하드웨어별). auto=자동 감지, --tier 로 지정
     live.target_fps = 15.0  # 무거운 노드는 낮은 fps — 다운스트림은 latest-wins (§1.2)
     audio = AudioIn("audio1", index=7)
     mod = ModMatrix("mod1", index=8)
@@ -59,8 +60,18 @@ def build_graph() -> tuple[Graph, Camera]:
     return graph, cam
 
 
-async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.0) -> None:
-    graph, cam = build_graph()
+async def run(
+    host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.0, tier: str = "auto"
+) -> None:
+    from .diffusion import spec
+
+    prof = spec.resolve(tier)
+    print(
+        f"spec tier: {tier} → {prof.tier} ({prof.backend}/{prof.device}, "
+        f"{prof.width}x{prof.height}) · devices={sorted(spec.available_devices())}",
+        flush=True,
+    )
+    graph, cam = build_graph(tier)
     for node in graph.nodes.values():
         node.start()  # 캡처 스레드/모델 로드 등 무거운 준비 (R4: tick 밖)
     server = EngineServer(graph=graph, host=host, port=port)
@@ -127,8 +138,21 @@ async def run(host: str = "127.0.0.1", port: int = 8787, target_fps: float = 30.
 
 
 def main() -> None:
+    import argparse
+
+    from .diffusion.spec import TIER_NAMES
+
+    ap = argparse.ArgumentParser(prog="conode_engine", description="conode 실시간 엔진")
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--port", type=int, default=8787)
+    ap.add_argument("--fps", type=float, default=30.0, help="브로드캐스터 목표 fps")
+    ap.add_argument(
+        "--tier", default="auto", choices=TIER_NAMES,
+        help="LiveDiffusion 스펙 티어 (기본 auto=자동 감지). 저사양 확인: potato",
+    )
+    args = ap.parse_args()
     try:
-        asyncio.run(run())
+        asyncio.run(run(host=args.host, port=args.port, target_fps=args.fps, tier=args.tier))
     except KeyboardInterrupt:
         pass
 

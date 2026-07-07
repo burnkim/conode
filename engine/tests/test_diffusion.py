@@ -64,7 +64,9 @@ def test_live_fallback_generate():
     n.start()
     out = n.process(FrameCtx(), {"in": _frame()})
     assert out.shape == (180, 320, 3) and out.dtype == np.uint8
-    assert n.backend_name == "fallback-stylize"
+    # backend_name 은 이제 "<백엔드>·<적용티어>" (auto→potato 폴백)
+    assert n.backend_name.startswith("fallback-stylize")
+    assert "potato" in n.backend_name
 
 
 def test_live_none_input():

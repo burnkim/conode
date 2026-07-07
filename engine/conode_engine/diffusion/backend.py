@@ -40,18 +40,28 @@ class DiffusionBackend:
 
 
 class FallbackBackend(DiffusionBackend):
-    """Mac/CPU 프리뷰용. 실디퓨전이 아니라 파라미터에 반응하는 스타일라이즈.
-    4090 배포 시 StreamDiffusionBackend 로 교체된다."""
+    """CPU/저사양 프리뷰용(potato 티어). 실디퓨전이 아니라 파라미터에 반응하는
+    스타일라이즈. profile.width/height 저해상도로 작업해 "아주 저크기·저비용"으로
+    돌린 뒤 입력 크기로 업스케일한다. 상위 티어에서는 Diffusers/StreamDiffusion 으로 교체."""
 
     name = "fallback-stylize"
     real = False
 
+    def __init__(self, profile=None):
+        self.profile = profile
+
     def generate(self, req: DiffusionRequest) -> np.ndarray:
         img = req.image
+        H, W = img.shape[:2]
+        # 저크기 작업 해상도 (profile 있으면 그 크기, 없으면 입력 그대로)
+        if self.profile is not None:
+            wk = cv2.resize(img, (self.profile.width, self.profile.height))
+        else:
+            wk = img
         try:
-            styl = cv2.stylization(img, sigma_s=60, sigma_r=0.45)
+            styl = cv2.stylization(wk, sigma_s=60, sigma_r=0.45)
         except Exception:
-            styl = cv2.bilateralFilter(img, 9, 120, 120)
+            styl = cv2.bilateralFilter(wk, 9, 120, 120)
         # 프롬프트 → 결정적 색조 시프트 (hash 대신 ord 합: 프로세스 간 안정)
         hue = (sum(ord(c) for c in req.prompt) % 180) if req.prompt else 0
         hsv = cv2.cvtColor(styl, cv2.COLOR_BGR2HSV).astype(np.int16)
@@ -63,19 +73,68 @@ class FallbackBackend(DiffusionBackend):
             c = cv2.resize(c, (tinted.shape[1], tinted.shape[0]))
             tinted = cv2.addWeighted(tinted, 1.0, c, min(0.6, req.control_weight * 0.3), 0)
         a = min(1.0, req.strength / 2.0 + 0.3)
-        return cv2.addWeighted(tinted, a, img, 1.0 - a, 0)
+        out = cv2.addWeighted(tinted, a, wk, 1.0 - a, 0)
+        # 입력 크기로 복원 (저크기 작업 → 원본 해상도 프리뷰)
+        if out.shape[:2] != (H, W):
+            out = cv2.resize(out, (W, H))
+        return out
 
 
-def select_backend(config=None) -> DiffusionBackend:
-    """가용 백엔드 선택. CUDA(4090)면 StreamDiffusion+LCM, 아니면 Fallback(Mac).
-    torch/CUDA 미존재 시 조용히 Fallback 으로 우회한다."""
-    try:
-        import torch  # Mac 개발기엔 미설치 → ImportError → Fallback
+def select_backend(profile=None) -> DiffusionBackend:
+    """스펙 티어(SpecProfile) 기반 백엔드 선택. profile 없으면 자동 감지.
+    요청 티어의 디바이스/의존성이 이 장비에 없으면 조용히 아래 티어로 내려가
+    (최종 potato=Fallback) 엔진이 죽지 않는다. R4: 무거운 준비는 prepare()."""
+    from . import spec
 
-        if torch.cuda.is_available():
-            from .streamdiffusion_backend import StreamDiffusionBackend
+    if profile is None:
+        profile = spec.resolve("auto")
 
-            return StreamDiffusionBackend(config)
-    except Exception:
-        pass
-    return FallbackBackend()
+    backend = profile.backend
+    # 디바이스 부재 시 다운그레이드 (예: cuda 티어를 Mac 에서 선택)
+    if backend != "fallback" and not spec.device_ok(profile.device):
+        profile = spec.downgrade(profile)
+        backend = profile.backend
+
+    if backend == "diffusers":
+        try:
+            import importlib.util
+
+            if importlib.util.find_spec("torch") and importlib.util.find_spec("diffusers"):
+                from .diffusers_backend import DiffusersBackend
+
+                return DiffusersBackend(profile)
+        except Exception:
+            pass
+        return FallbackBackend(spec.TIERS["potato"])
+
+    if backend == "streamdiffusion":
+        try:
+            import importlib.util
+
+            if importlib.util.find_spec("torch") and importlib.util.find_spec("streamdiffusion"):
+                from .streamdiffusion_backend import StreamConfig, StreamDiffusionBackend
+
+                cfg = StreamConfig(
+                    model_id=profile.model_id,
+                    lcm_lora_id=profile.lcm_lora_id,
+                    width=profile.width,
+                    height=profile.height,
+                    use_tensorrt=profile.use_tensorrt,
+                )
+                return StreamDiffusionBackend(cfg)
+        except Exception:
+            pass
+        # streamdiffusion 미설치 → diffusers 시도 후 최종 potato
+        if profile.device == "cuda":
+            try:
+                import importlib.util
+
+                if importlib.util.find_spec("torch") and importlib.util.find_spec("diffusers"):
+                    from .diffusers_backend import DiffusersBackend
+
+                    return DiffusersBackend(spec.TIERS["cuda_3070"])
+            except Exception:
+                pass
+        return FallbackBackend(spec.TIERS["potato"])
+
+    return FallbackBackend(profile)
