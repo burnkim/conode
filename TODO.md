@@ -105,7 +105,8 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 # TODO — 리뷰 후속 (아키텍처/노드/악기 기능)
 - [x] A1 ParamSpec → UI 자동생성 (R2 척추) — node.list/graph.state에 params(스펙+값) 전송, design/ParamPanel(kind→6위젯 자동), /live 하드코딩 제거. ParamValue에 number[] 추가(multimarker). 첫 렌더 undefined 바인딩 크래시 수정(`{#if path in vals}`).
       ↳ 2026-07-05: 10노드 전부 파라미터 자동 렌더(LiveDiffusion 13개 포함, controlnet/advanced Group). Canny invert 토글→param.set→프리뷰 반전 실측. docs/verify/A1-paramspec-autogen.png.
-- [ ] A2 Scheduler(노드별 fps) + latest-wins 를 라이브 경로에 배선.
+- [x] A2 Scheduler(노드별 fps) + latest-wins 를 라이브 경로에 배선.
+      ↳ 2026-07-05 완료(체크 누락, 2026-07-07 정리): graph.evaluate fps-게이팅(target_fps 미달 시 tick 스킵)+measured_fps EMA, app.py live.target_fps=15, FramePreview 노드별 실측 fps. 다운스트림은 latest-wins.
 - [x] B §1.3 v1 노드 8종 추가 — Image·Blend·Crossfade·ColorGrade·Switch·MaskCompose·FeedbackLoop·StylePreset (registry 21종, /graph 팔레트 전체). A1 자동 UI 로 파라미터 무료.
       ↳ 2026-07-05: pytest+12(노드 B). 팔레트로 StylePreset 추가→/live 자동 파라미터(enum+slider) 실측. (Video File/EnvelopeFollower/standalone LFO 는 후속.)
 - [x] C 제스처 JSON 규칙 배선 + ModMatrix 제스처 소스. (이벤트 버스/씬 트리거→D, 매트릭스 에디터 UI→후속)
@@ -116,6 +117,14 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 # TODO — 후속작업
 - [x] 큐 바인딩 (제스처 이벤트 → 씬 recall) — §2 "이벤트는 씬 전환에 바인딩" 완성.
       ↳ 2026-07-05: SceneStore.bind/trigger, 프로토콜 cue.bind, 서버 핸들 + 브로드캐스터가 노드 output.event 엣지검출→scenes.trigger(씬 크로스페이드 recall). /scenes 바인딩 UI(palm_push/point_hold→씬). pytest+1. E2E: 바인딩 저장·엔진 안정 확인.
+
+# TODO — 홈 + 스펙 티어 (2026-07-07, /goal: 우선순위 순 + 다양한 사양 리팩토링)
+- [x] H1 루트 홈 랜딩 — `m0.studio shell` 플레이스홀더 교체. 엔진 상태 + 8 라우트 카드 + 실행 안내(2 프로세스) + 스펙 티어 설명. R1(design/ 클래스만).
+      ↳ 2026-07-07: routes/+page.svelte 재작성, gallery.css dg-home*/dg-hint 추가. svelte-check 0/0. /browse E2E: 다크 캔버스·8카드·engine:closed 힌트 렌더. docs/verify/home-landing.png.
+- [ ] H2 스펙 티어 코어 — diffusion/spec.py(SpecProfile + TIERS potato/mps_low/cuda_3070/cuda_max + auto_detect). backend.select_backend(profile) 티어 기반으로. FallbackBackend 저해상도(저크기) 지원. pytest.
+- [ ] H3 DiffusersBackend — torch diffusers img2img LCM, device auto(cuda/mps/cpu). 3070(CUDA)·이 Mac(MPS)·CPU 공용. 지연 임포트, 의존성 없으면 select_backend 가 potato 로 폴백. requirements-diffusers.txt.
+- [ ] H4 LiveDiffusion tier 파라미터(Enum) + 엔진 `--tier` 옵션 + auto 감지 배선. A1 자동 UI 로 /live 에서 티어 선택. 이 Mac potato E2E 확인.
+- [ ] H5 문서 — docs/spec-tiers.md(티어별 하드웨어·설치·성능), README 티어 표 반영.
 
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.

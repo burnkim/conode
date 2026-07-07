@@ -212,6 +212,62 @@
 	opacity: 0.5;
 }
 
+/* --- 홈 랜딩 (루트 /) --- */
+.dg-home {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(calc(var(--space-unit) * 62), 1fr));
+	gap: calc(var(--space-unit) * 4);
+}
+.dg-home-card {
+	display: block;
+	background: var(--bg-card);
+	border: var(--border-w) solid var(--field-border);
+	border-left: calc(var(--space-unit) * 1) solid var(--c, var(--cat-depth));
+	border-radius: var(--radius-card);
+	padding: calc(var(--space-unit) * 4);
+	text-decoration: none;
+	transition: border-color 0.12s ease;
+}
+.dg-home-card:hover {
+	border-color: var(--c, var(--cat-depth));
+}
+.dg-home-name {
+	color: var(--text-hi);
+	font-size: var(--fs-label);
+	font-weight: 600;
+}
+.dg-home-path {
+	color: var(--c, var(--cat-depth));
+	font-size: 11px;
+	margin-left: calc(var(--space-unit) * 2);
+}
+.dg-home-desc {
+	margin-top: calc(var(--space-unit) * 2);
+	color: var(--text-lo);
+	font-size: var(--fs-value);
+	line-height: 1.5;
+}
+.dg-hint {
+	background: var(--bg-card);
+	border-radius: var(--radius-card);
+	padding: calc(var(--space-unit) * 4);
+	color: var(--text-lo);
+	font-size: var(--fs-value);
+	line-height: 1.7;
+}
+.dg-hint code {
+	color: var(--text-hi);
+	background: var(--bg-canvas);
+	padding: 1px calc(var(--space-unit) * 1.5);
+	border-radius: var(--radius-field);
+}
+.dg-hint strong {
+	color: var(--text-hi);
+}
+.dg-hint.warn {
+	border-left: calc(var(--space-unit) * 1) solid var(--state-warn);
+}
+
 /* --- 매핑 에디터 (T32) --- */
 .dg-map {
 	position: relative;
