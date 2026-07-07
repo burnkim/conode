@@ -130,6 +130,13 @@ Mac 검증 가능한 전 범위 완료. 남은 검증: 4090(M2 실디퓨전·25f
 - [x] H5 문서 — docs/spec-tiers.md(티어별 하드웨어·설치·성능), README 티어 표 반영.
       ↳ 2026-07-07: docs/spec-tiers.md(티어 표·선택·설치·폴백 규칙·검증 상태), README M2 행/라이브 악기 기능/실행안내 티어 반영.
 
+# TODO — 로드맵 노드 + 에디터 (2026-07-07, /goal 이어서: modmatrix 에디터 → video/envelope/lfo 노드)
+- [x] E1 ModMatrix 매트릭스 에디터 UI — /audio 에 소스→타깃 셀 편집(추가/amount/curve/삭제). R3: modmatrix.get/state/cell.set/cell.clear 스키마 먼저.
+      ↳ 2026-07-07: 스키마 4메시지+ModCellSpec 추가·재생성. ModMatrix.set_cell/clear_cell/cells_state, 노드 available_sources(102)/targets(R8)/matrix_state, 서버 3핸들러(변경 시 broadcast). client 상태/메서드, /audio 셀 리스트 에디터(gallery.css mm-*). pytest+6(test_modmatrix_editor). E2E: /audio 셀 추가(4→5)·삭제(5→4) 왕복 실측. docs/verify/modmatrix-editor.png.
+- [ ] E2 Video File 노드 — 파일에서 프레임 재생(cv2.VideoCapture, loop/속도). Camera 대체 입력, Mac 검증.
+- [ ] E3 EnvelopeFollower 노드 — 오디오/신호 → 어택/릴리스 엔벨로프 (modulatable 소스 보강). Mac 검증.
+- [ ] E4 LFO 노드 (standalone) — sine/tri/saw/square LFO 를 독립 노드로(rate/phase/shape), ModMatrix 소스로 노출. Mac 검증.
+
 ## Questions / 리뷰 대기 (기획 세션)
 - Q1 T2에서 인터랙션 파생 토큰(--field-fill/border/hover, --focus-ring, --knob 등) 추가함 → §5.1상 디자인 리뷰 대상. 확정 필요.
 - Q2 폰트(Inter/Pretendard/JetBrains Mono) 미번들 → 현재 시스템 폴백. 번들 방식/라이선스 결정 필요(오프라인 공연 도구).

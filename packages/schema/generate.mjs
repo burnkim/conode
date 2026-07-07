@@ -34,7 +34,12 @@ const ORDER = [
 	'SceneRecall',
 	'SceneGet',
 	'SceneList',
-	'CueBind'
+	'CueBind',
+	'ModCellSpec',
+	'ModMatrixGet',
+	'ModMatrixState',
+	'ModCellSet',
+	'ModCellClear'
 ];
 const MESSAGES = ORDER.filter((n) => isMessage(defs[n]));
 

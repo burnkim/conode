@@ -183,7 +183,65 @@ export const CueBind = z
 	.strict();
 export type CueBind = z.infer<typeof CueBind>;
 
-export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind]);
+export const ModCellSpec = z
+	.object({
+	"source": z.string(),
+	"target": z.string(),
+	"amount": z.number(),
+	"curve": z.string(),
+	"smooth_ms": z.number()
+	})
+	.strict();
+export type ModCellSpec = z.infer<typeof ModCellSpec>;
+
+export const ModMatrixGet = z
+	.object({
+	"type": z.literal("modmatrix.get"),
+	"v": z.literal(0),
+	"node": z.string().optional()
+	})
+	.strict();
+export type ModMatrixGet = z.infer<typeof ModMatrixGet>;
+
+export const ModMatrixState = z
+	.object({
+	"type": z.literal("modmatrix.state"),
+	"v": z.literal(0),
+	"node": z.string(),
+	"sources": z.array(z.string()),
+	"targets": z.array(z.string()),
+	"curves": z.array(z.string()),
+	"cells": z.array(ModCellSpec)
+	})
+	.strict();
+export type ModMatrixState = z.infer<typeof ModMatrixState>;
+
+export const ModCellSet = z
+	.object({
+	"type": z.literal("modmatrix.cell.set"),
+	"v": z.literal(0),
+	"node": z.string(),
+	"source": z.string(),
+	"target": z.string(),
+	"amount": z.number(),
+	"curve": z.string().optional(),
+	"smooth_ms": z.number().optional()
+	})
+	.strict();
+export type ModCellSet = z.infer<typeof ModCellSet>;
+
+export const ModCellClear = z
+	.object({
+	"type": z.literal("modmatrix.cell.clear"),
+	"v": z.literal(0),
+	"node": z.string(),
+	"source": z.string(),
+	"target": z.string()
+	})
+	.strict();
+export type ModCellClear = z.infer<typeof ModCellClear>;
+
+export const Message = z.discriminatedUnion('type', [Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind, ModMatrixGet, ModMatrixState, ModCellSet, ModCellClear]);
 export type Message = z.infer<typeof Message>;
 
 export function parseMessage(u: unknown): Message {

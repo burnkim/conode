@@ -1,6 +1,14 @@
 // conode WS 클라이언트 (T6). engine 과의 계약은 zod 스키마로만 검증 (R3).
 // Svelte 5 룬 모듈(.svelte.ts) — 상태는 반응형.
-import { Message, type Edge, type NodeInfo } from './messages';
+import { Message, type Edge, type ModCellSpec, type NodeInfo } from './messages';
+
+export interface ModMatrixView {
+	node: string;
+	sources: string[];
+	targets: string[];
+	curves: string[];
+	cells: ModCellSpec[];
+}
 
 export interface FrameState {
 	url: string; // data:image/<fmt>;base64,...
@@ -18,6 +26,7 @@ export class ConodeClient {
 	nodes = $state<NodeInfo[]>([]);
 	edges = $state<Edge[]>([]);
 	scenes = $state<string[]>([]);
+	modMatrix = $state<ModMatrixView | null>(null);
 	frames = $state<Record<string, FrameState>>({});
 	rejected = $state(0); // 스키마 위반으로 버린 메시지 수
 
@@ -60,6 +69,14 @@ export class ConodeClient {
 			this.edges = msg.edges;
 		} else if (msg.type === 'scene.list') {
 			this.scenes = msg.names;
+		} else if (msg.type === 'modmatrix.state') {
+			this.modMatrix = {
+				node: msg.node,
+				sources: msg.sources,
+				targets: msg.targets,
+				curves: msg.curves,
+				cells: msg.cells
+			};
 		} else if (msg.type === 'frame.preview') {
 			this.frames = {
 				...this.frames,
@@ -105,6 +122,27 @@ export class ConodeClient {
 	}
 	bindCue(event: string, scene: string, fade = 0): void {
 		this.#send({ type: 'cue.bind', v: 0, event, scene, fade });
+	}
+
+	// --- ModMatrix 에디터 ---
+	getModMatrix(node?: string): void {
+		this.#send(node ? { type: 'modmatrix.get', v: 0, node } : { type: 'modmatrix.get', v: 0 });
+	}
+	setModCell(
+		node: string,
+		source: string,
+		target: string,
+		amount: number,
+		curve?: string,
+		smoothMs?: number
+	): void {
+		const m: Record<string, unknown> = { type: 'modmatrix.cell.set', v: 0, node, source, target, amount };
+		if (curve !== undefined) m.curve = curve;
+		if (smoothMs !== undefined) m.smooth_ms = smoothMs;
+		this.#send(m);
+	}
+	clearModCell(node: string, source: string, target: string): void {
+		this.#send({ type: 'modmatrix.cell.clear', v: 0, node, source, target });
 	}
 
 	#send(obj: unknown): void {

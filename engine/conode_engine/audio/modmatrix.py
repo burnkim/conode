@@ -58,6 +58,43 @@ class ModMatrix:
     def add_lfo(self, name: str, lfo: LFO) -> None:
         self.lfos[name] = lfo
 
+    # --- UI 편집 (매트릭스 에디터) ---
+    def find_cell(self, source: str, target: str) -> Optional[ModCell]:
+        for c in self.cells:
+            if c.source == source and c.target == target:
+                return c
+        return None
+
+    def set_cell(
+        self, source: str, target: str, amount: float,
+        curve: str = "lin", smooth_ms: float = 50.0,
+    ) -> ModCell:
+        """(source,target) 셀 upsert. 있으면 갱신, 없으면 추가."""
+        cell = self.find_cell(source, target)
+        if cell is None:
+            cell = ModCell(source=source, target=target)
+            self.cells.append(cell)
+        cell.amount = float(amount)
+        cell.curve = curve if curve in ("lin", "exp", "log") else "lin"
+        cell.smooth_ms = max(0.0, float(smooth_ms))
+        return cell
+
+    def clear_cell(self, source: str, target: str) -> bool:
+        cell = self.find_cell(source, target)
+        if cell is None:
+            return False
+        self.cells.remove(cell)
+        return True
+
+    def cells_state(self) -> list[dict]:
+        return [
+            {
+                "source": c.source, "target": c.target, "amount": c.amount,
+                "curve": c.curve, "smooth_ms": c.smooth_ms,
+            }
+            for c in self.cells
+        ]
+
     def resolve(self, source: str, features: dict, t: float) -> float:
         if source in self.lfos:
             return self.lfos[source].value(t)

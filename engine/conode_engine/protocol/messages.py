@@ -134,7 +134,50 @@ class CueBind(BaseModel):
     scene: str
     fade: Optional[float] = None
 
-Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind], Field(discriminator="type")]
+class ModCellSpec(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    source: str
+    target: str
+    amount: float
+    curve: str
+    smooth_ms: float
+
+class ModMatrixGet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["modmatrix.get"] = "modmatrix.get"
+    v: Literal[0] = 0
+    node: Optional[str] = None
+
+class ModMatrixState(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["modmatrix.state"] = "modmatrix.state"
+    v: Literal[0] = 0
+    node: str
+    sources: list[str]
+    targets: list[str]
+    curves: list[str]
+    cells: list[ModCellSpec]
+
+class ModCellSet(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["modmatrix.cell.set"] = "modmatrix.cell.set"
+    v: Literal[0] = 0
+    node: str
+    source: str
+    target: str
+    amount: float
+    curve: Optional[str] = None
+    smooth_ms: Optional[float] = None
+
+class ModCellClear(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    type: Literal["modmatrix.cell.clear"] = "modmatrix.cell.clear"
+    v: Literal[0] = 0
+    node: str
+    source: str
+    target: str
+
+Message = Annotated[Union[Hello, NodeList, ParamSet, FramePreview, GraphGet, GraphState, NodeAdd, NodeRemove, NodeConnect, NodeDisconnect, SceneSave, SceneRecall, SceneGet, SceneList, CueBind, ModMatrixGet, ModMatrixState, ModCellSet, ModCellClear], Field(discriminator="type")]
 _ADAPTER: TypeAdapter[Message] = TypeAdapter(Message)
 
 

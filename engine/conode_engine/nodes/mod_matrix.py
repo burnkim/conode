@@ -45,6 +45,39 @@ class ModMatrix(Processor):
         # 제스처 소스(§3.3): 프레임 제스처가 디퓨전 강도를 밀어올림
         self.matrix.add_cell(ModCell("gesture.frame", "live1.prompt_strength", amount=0.5))
 
+    # --- 매트릭스 에디터용 상태 노출 (UI, R3 스키마로 전송) ---
+    _GESTURE_SOURCES = ["gesture.frame", "gesture.pinch", "gesture.point", "gesture.palm", "gesture.value"]
+    CURVES = ["lin", "exp", "log"]
+
+    def available_sources(self) -> list[str]:
+        """스템×특성 + LFO + 제스처 소스 카탈로그."""
+        from ..audio.features import FEATURES
+
+        n_stems = 12  # AudioIn 기본 채널 수
+        stems = [f"stem{i}.{feat}" for i in range(n_stems) for feat in FEATURES]
+        return stems + list(self.matrix.lfos.keys()) + self._GESTURE_SOURCES
+
+    def available_targets(self) -> list[str]:
+        """그래프 전체의 modulatable 파라미터 (R8) → 'nodeId.path'."""
+        if self.graph is None:
+            return []
+        out: list[str] = []
+        for nid, node in self.graph.nodes.items():
+            if nid == self.id:
+                continue
+            for path in node.modulation_targets():
+                out.append(f"{nid}.{path}")
+        return out
+
+    def matrix_state(self) -> dict:
+        return {
+            "node": self.id,
+            "sources": self.available_sources(),
+            "targets": self.available_targets(),
+            "curves": list(self.CURVES),
+            "cells": self.matrix.cells_state(),
+        }
+
     # --- 그래프 콜백 (target = "nodeId.paramPath") ---
     def _node_path(self, target: str):
         nid, _, path = target.partition(".")

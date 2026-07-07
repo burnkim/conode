@@ -222,6 +222,74 @@
         "fade": { "type": "number" }
       }
     },
+    "ModCellSpec": {
+      "type": "object",
+      "description": "ModMatrix 셀 — source→target 라우팅 (amount/curve/smooth).",
+      "additionalProperties": false,
+      "required": ["source", "target", "amount", "curve", "smooth_ms"],
+      "properties": {
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "amount": { "type": "number" },
+        "curve": { "type": "string" },
+        "smooth_ms": { "type": "number" }
+      }
+    },
+    "ModMatrixGet": {
+      "type": "object",
+      "description": "ModMatrix 상태 요청 (UI→engine). node 생략 시 첫 mod_matrix.",
+      "additionalProperties": false,
+      "required": ["type", "v"],
+      "properties": {
+        "type": { "const": "modmatrix.get" },
+        "v": { "const": 0 },
+        "node": { "type": "string" }
+      }
+    },
+    "ModMatrixState": {
+      "type": "object",
+      "description": "ModMatrix 상태 (engine→UI). 가용 소스/타깃 + 활성 셀. 변경 시 브로드캐스트.",
+      "additionalProperties": false,
+      "required": ["type", "v", "node", "sources", "targets", "curves", "cells"],
+      "properties": {
+        "type": { "const": "modmatrix.state" },
+        "v": { "const": 0 },
+        "node": { "type": "string" },
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "targets": { "type": "array", "items": { "type": "string" } },
+        "curves": { "type": "array", "items": { "type": "string" } },
+        "cells": { "type": "array", "items": { "$ref": "#/$defs/ModCellSpec" } }
+      }
+    },
+    "ModCellSet": {
+      "type": "object",
+      "description": "ModMatrix 셀 설정/갱신 (UI→engine). (source,target) upsert.",
+      "additionalProperties": false,
+      "required": ["type", "v", "node", "source", "target", "amount"],
+      "properties": {
+        "type": { "const": "modmatrix.cell.set" },
+        "v": { "const": 0 },
+        "node": { "type": "string" },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "amount": { "type": "number" },
+        "curve": { "type": "string" },
+        "smooth_ms": { "type": "number" }
+      }
+    },
+    "ModCellClear": {
+      "type": "object",
+      "description": "ModMatrix 셀 제거 (UI→engine).",
+      "additionalProperties": false,
+      "required": ["type", "v", "node", "source", "target"],
+      "properties": {
+        "type": { "const": "modmatrix.cell.clear" },
+        "v": { "const": 0 },
+        "node": { "type": "string" },
+        "source": { "type": "string" },
+        "target": { "type": "string" }
+      }
+    },
     "Message": {
       "description": "모든 프로토콜 메시지의 판별 유니온 (discriminator: type).",
       "oneOf": [
@@ -239,7 +307,11 @@
         { "$ref": "#/$defs/SceneRecall" },
         { "$ref": "#/$defs/SceneGet" },
         { "$ref": "#/$defs/SceneList" },
-        { "$ref": "#/$defs/CueBind" }
+        { "$ref": "#/$defs/CueBind" },
+        { "$ref": "#/$defs/ModMatrixGet" },
+        { "$ref": "#/$defs/ModMatrixState" },
+        { "$ref": "#/$defs/ModCellSet" },
+        { "$ref": "#/$defs/ModCellClear" }
       ]
     }
   },

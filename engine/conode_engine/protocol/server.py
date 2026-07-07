@@ -22,6 +22,11 @@ from .messages import (
     GraphGet,
     GraphState,
     Hello,
+    ModCellClear,
+    ModCellSet,
+    ModCellSpec,
+    ModMatrixGet,
+    ModMatrixState,
     NodeAdd,
     NodeConnect,
     NodeDisconnect,
@@ -156,6 +161,44 @@ class EngineServer:
             await self._send(ws, SceneList(names=self.scenes.names()))
         elif isinstance(msg, CueBind):
             self.scenes.bind(msg.event, msg.scene, float(msg.fade or 0.0))
+        elif isinstance(msg, ModMatrixGet):
+            node = self._modmatrix_node(msg.node)
+            if node is not None:
+                await self._send(ws, self._modmatrix_state(node))
+        elif isinstance(msg, ModCellSet):
+            node = self._modmatrix_node(msg.node)
+            if node is not None:
+                node.matrix.set_cell(
+                    msg.source, msg.target, msg.amount,
+                    curve=msg.curve or "lin",
+                    smooth_ms=50.0 if msg.smooth_ms is None else msg.smooth_ms,
+                )
+                await self.broadcast(self._modmatrix_state(node))
+        elif isinstance(msg, ModCellClear):
+            node = self._modmatrix_node(msg.node)
+            if node is not None:
+                node.matrix.clear_cell(msg.source, msg.target)
+                await self.broadcast(self._modmatrix_state(node))
+
+    def _modmatrix_node(self, node_id: Optional[str]):
+        """mod_matrix 노드 조회. id 지정 시 그것, 없으면 첫 mod_matrix."""
+        if node_id:
+            n = self.graph.nodes.get(node_id)
+            return n if n is not None and getattr(n, "kind", None) == "mod_matrix" else None
+        for n in self.graph.nodes.values():
+            if getattr(n, "kind", None) == "mod_matrix":
+                return n
+        return None
+
+    def _modmatrix_state(self, node) -> ModMatrixState:
+        s = node.matrix_state()
+        return ModMatrixState(
+            node=s["node"],
+            sources=s["sources"],
+            targets=s["targets"],
+            curves=s["curves"],
+            cells=[ModCellSpec(**c) for c in s["cells"]],
+        )
 
     async def _add_node(self, msg: NodeAdd) -> None:
         cls = node_registry().get(msg.node_type)
